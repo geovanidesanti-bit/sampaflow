@@ -177,35 +177,34 @@ def render_flow_ai_footer():
             )
 
 # ---------------------------------------------------------
-# TELA 1: HOME - PAVILHÕES E EVENTOS DE SÃO PAULO
+# TELA 1: HOME - HUB DE EVENTOS E TODOS OS MÓDULOS
 # ---------------------------------------------------------
 if st.session_state.pagina_atual == "Home":
-    render_top_bar("Hub de Eventos SP")
+    render_top_bar("Hub Central SP")
 
     st.markdown(
         """
         <div class="logo-container">
             <span class="logo-title">SAMPAFLOW</span>
-            <div style="color: #9ca3af; font-size: 12px; margin-top: 4px;">Plataforma Oficial de Conexões, Negócios & Mobilidade em SP</div>
+            <div style="color: #9ca3af; font-size: 12px; margin-top: 4px;">Ecossistema Urbano Preditivo & Inteligência de Fluxo</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    # Acesso rápido para Motoristas no topo
-    col_mot1, col_mot2 = st.columns(2)
-    with col_mot1:
+    # Atalhos rápidos de acesso
+    col_u1, col_u2 = st.columns(2)
+    with col_u1:
         if st.button("🚗 Portal do Motorista", use_container_width=True):
             st.session_state.pagina_atual = "Portal Motorista"
             st.rerun()
-    with col_mot2:
-        if st.button("👤 Meu Perfil / Cadastro", use_container_width=True):
+    with col_u2:
+        if st.button("👤 Cadastro / Perfil LinkedIn", use_container_width=True):
             st.session_state.pagina_atual = "Cadastro Usuario"
             st.rerun()
 
-    st.markdown("### 🏛️ Grandes Pavilhões & Feiras Ativas em SP")
+    st.markdown("### 🏛️ Grandes Pavilhões & Feiras de São Paulo")
 
-    # Lista de Eventos nos Pavilhões
     pavilhoes_eventos = [
         {
             "id": "expocenter_norte",
@@ -250,10 +249,28 @@ if st.session_state.pagina_atual == "Home":
             st.session_state.pagina_atual = "Dashboard Evento"
             st.rerun()
 
+    st.markdown("### 🌐 Módulos Principais do Ecossistema")
+    
+    if st.button("🤝  **SAMPA MATCH** — Radar Biz & Conexões Gerais", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Match Geral"
+        st.rerun()
+
+    if st.button("📍  **GPS INDOOR** — Mapa Tático & Localização", use_container_width=True):
+        st.session_state.pagina_atual = "GPS Indoor"
+        st.rerun()
+
+    if st.button("🛍️  **GASTRONOMIA & RESERVAS** — Restaurantes com Seletor de Horário", use_container_width=True):
+        st.session_state.pagina_atual = "Compras Dual"
+        st.rerun()
+
+    if st.button("💼  **SAMPA WORK** — Jobs & Oportunidades Executivas", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Work"
+        st.rerun()
+
     render_flow_ai_footer()
 
 # ---------------------------------------------------------
-# TELA 2: CADASTRO DO USUÁRIO (LinkedIn + WhatsApp + Empresa de Estande)
+# TELA 2: CADASTRO DO USUÁRIO
 # ---------------------------------------------------------
 elif st.session_state.pagina_atual == "Cadastro Usuario":
     render_top_bar("Perfil & Credenciamento")
@@ -312,7 +329,7 @@ elif st.session_state.pagina_atual == "Cadastro Usuario":
     render_flow_ai_footer()
 
 # ---------------------------------------------------------
-# TELA 3: DASHBOARD DO EVENTO SELECIONADO (Matches, Feed, Empresas)
+# TELA 3: DASHBOARD DO EVENTO SELECIONADO
 # ---------------------------------------------------------
 elif st.session_state.pagina_atual == "Dashboard Evento":
     ev = st.session_state.evento_selecionado
@@ -345,14 +362,12 @@ elif st.session_state.pagina_atual == "Dashboard Evento":
             unsafe_allow_html=True,
         )
 
-    # Abas de Funcionalidades do Evento
     aba_escolhida = st.radio("Navegação do Evento:", ["🤝 Match & Conexões B2B", "🏢 Empresas do Estande & Nichos", "📸 Publicações & Feed"], horizontal=True)
 
     if aba_escolhida == "🤝 Match & Conexões B2B":
         st.markdown("### ⚡ Radar de Matches Inteligentes")
         st.markdown("<p style='font-size:12px; color:#9ca3af;'>Conecte-se com expositores e profissionais alinhados ao seu nicho.</p>", unsafe_allow_html=True)
 
-        # Exemplo de Perfis para Match
         perfis_match = [
             {"nome": "Marcos Vinicius", "cargo": "Head de Inovação", "empresa": "CloudNet Brasil", "nicho": "Tecnologia & Software B2B"},
             {"nome": "Juliana Paes", "cargo": "Diretora de Contratos", "empresa": "Global Supply Ltda", "nicho": "Logística & Supply Chain"},
@@ -432,87 +447,15 @@ elif st.session_state.pagina_atual == "Dashboard Evento":
     render_flow_ai_footer()
 
 # ---------------------------------------------------------
-# TELA 4: PORTAL DO MOTORISTA (Cadastro, Documentos, Recarga Pix & Taxa 10%)
+# TELA 4: SAMPA MATCH GERAL
 # ---------------------------------------------------------
-elif st.session_state.pagina_atual == "Portal Motorista":
-    render_top_bar("Portal do Motorista SampaDrive")
+elif st.session_state.pagina_atual == "Sampa Match Geral":
+    render_top_bar("SAMPA MATCH: Radar & Áudio")
 
     st.markdown(
         """
-        <div class="neon-card-cyan">
-            <div style="color: #00D2FF; font-weight: bold; font-size: 15px; margin-bottom: 6px;">🚗 CADASTRO & PAINEL DE MOTORISTA EXECUTIVO</div>
-            <p style="font-size: 13px; color: #d1d5db;">Cadastre sua foto, documento do veículo e CNH em PDF. Após validação instantânea, fique online para aceitar corridas com taxa fixa de 10%.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    if not st.session_state.motorista_logado:
-        with st.form("form_cad_motorista"):
-            st.markdown("### Credenciamento de Motorista")
-            nome_mot = st.text_input("Nome Completo do Motorista", "Carlos Silva")
-            tel_mot = st.text_input("Telefone / WhatsApp", "(11) 98888-7777")
-            modelo_carro = st.text_input("Modelo e Placa do Veículo", "Toyota Corolla Prata — ABC-1234")
-            
-            foto_mot = st.file_uploader("📸 Foto de Perfil do Motorista", type=["png", "jpg", "jpeg"])
-            doc_carro = st.file_uploader("📄 Documento do Carro (CRLV em PDF)", type=["pdf"])
-            cnh_pdf = st.file_uploader("📄 CNH em PDF", type=["pdf"])
-            
-            btn_cad_mot = st.form_submit_button("🚀 Enviar Documentos para Aprovação")
-            if btn_cad_mot:
-                st.session_state.motorista_logado = True
-                st.session_state.dados_motorista = {
-                    "nome": nome_mot,
-                    "carro": modelo_carro,
-                    "saldo_pix": 50.00,  # Saldo simulado inicial
-                    "faturamento_total": 0.00
-                }
-                st.success("🎉 Cadastro aprovado automaticamente pela IA! Você já está liberado para ficar online.")
-                st.rerun()
-    else:
-        mot = st.session_state.dados_motorista
-        st.markdown(
-            f"""
-            <div style="background: rgba(0,245,155,0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,245,155,0.4); margin-bottom: 15px;">
-                <b style="color: #00F59B;">Status:</b> ✅ Online & Ativo<br>
-                <b>Motorista:</b> {mot['nome']} ({mot['carro']})<br>
-                <b>Faturamento Total em Corridas:</b> R$ {mot['faturamento_total']:.2f}<br>
-                <b>Taxa da Plataforma (10%):</b> R$ {mot['faturamento_total'] * 0.10:.2f}<br>
-                <b>Saldo de Recarga Pix:</b> R$ {mot['saldo_pix']:.2f}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown("### 💰 Recarga de Saldo via Pix (Taxa de Corridas)")
-        st.markdown("<p style='font-size:12px; color:#9ca3af;'>Gere seu Pix instantâneo para manter o saldo de repasse das taxas de 10% (ex: se faturar R$ 500, a taxa de 10% é R$ 50).</p>", unsafe_allow_html=True)
-
-        valor_recarga = st.number_input("Valor da Recarga Pix (R$)", min_value=10.0, max_value=500.0, value=50.0, step=10.0)
-        if st.button(" gerar QR Code Pix", use_container_width=True):
-            st.markdown(
-                f"""
-                <div style="background: rgba(0,213,255,0.08); border: 1px solid rgba(0,213,255,0.5); padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px;">
-                    <b style="color: #00D2FF;">📱 QR Code Pix Gerado com Sucesso!</b><br>
-                    <span style="font-size: 13px; color: #f3f4f6;">Valor: <b>R$ {valor_recarga:.2f}</b></span><br>
-                    <code style="background: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: block; margin-top: 8px;">00020126580014br.gov.bcb.pix...sampaflow-recarga-pix</code>
-                    <span style="font-size: 11px; color: #00F59B; margin-top: 6px; display: block;">🟢 Pagamento aprovado instantaneamente! Saldo atualizado.</span>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.session_state.dados_motorista["saldo_pix"] += valor_recarga
-
-        st.markdown("---")
-        st.markdown("### 🚘 Simulação de Corrida Recebida")
-        if st.button("Simular Nova Corrida (Ex: Expo Center Norte ➔ Jardins)", use_container_width=True):
-            valor_corrida = 80.00
-            taxa_devida = valor_corrida * 0.10
-            st.success(f"🛎️ Corrida Aceita!\n\n**Destino:** Jardins / Hotel Fasano\n**Valor da Corrida:** R$ {valor_corrida:.2f}\n**Taxa da Plataforma (10%):** R$ {taxa_devida:.2f}\n\n*O saldo foi debitado da sua carteira e o faturamento atualizado.*")
-            st.session_state.dados_motorista["faturamento_total"] += valor_corrida
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-    render_flow_ai_footer()
+        <div class="neon-card" style="text-align: center;">
+            <div style="color: #00F59B; font-weight: bold; font-size: 14px; margin-bottom: 8px;">🎧 GUIA DE ÁUDIO IMERSIVO: CENTRO HISTÓRICO</div>
+            <div style="font-size: 13px; color: #ffffff; font-weight: bold; margin-bottom: 4px;">Café Girondino</div>
+            <div style="font-size: 11px; color: #9ca3af; margin-bottom: 12px;">Fundado em 1554, o coração da metrópole guarda séculos de histórias...</div>
+            <div style="background: rgba(0,245,155,0.08); border-radius: 10px; padding: 15px; border:
