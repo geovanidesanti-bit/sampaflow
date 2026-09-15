@@ -101,7 +101,6 @@ def render_flow_ai_footer():
         """,
         unsafe_allow_html=True,
     )
-    # Componente de gravação de voz integrado no rodapé
     mic_recorder(
         start_prompt="🔴 Iniciar Gravação de Voz",
         stop_prompt="⏹️ Parar & Processar IA",
@@ -112,7 +111,6 @@ def render_flow_ai_footer():
 if st.session_state.pagina_atual == "Home":
     render_top_bar("Showcase")
 
-    # Logotipo Principal
     st.markdown(
         """
         <div class="logo-container">
@@ -122,7 +120,6 @@ if st.session_state.pagina_atual == "Home":
         unsafe_allow_html=True,
     )
 
-    # Indicador Flow AI Active
     st.markdown(
         """
         <div class="neon-card" style="text-align: center; border-color: rgba(0, 213, 255, 0.4);">
@@ -134,7 +131,6 @@ if st.session_state.pagina_atual == "Home":
         unsafe_allow_html=True,
     )
 
-    # Cards de Módulos (Estilo dos Prints)
     if st.button("🤝  **SAMPA MATCH**\n\n*(Radar Biz)*", use_container_width=True):
         st.session_state.pagina_atual = "Sampa Match"
         st.rerun()
@@ -171,7 +167,6 @@ elif st.session_state.pagina_atual == "Sampa Match":
         unsafe_allow_html=True,
     )
 
-    # Perfil 1 Sugerido
     st.markdown(
         """
         <div class="neon-card">
@@ -185,12 +180,11 @@ elif st.session_state.pagina_atual == "Sampa Match":
     col1, col2 = st.columns(2)
     with col1:
         if st.button("✨ Connect", key="conn_ana", use_container_width=True):
-            st.success("Conexão solicitada com Ana Mendes!")
+            st.success("Conexão solicitada!")
     with col2:
-        if st.button("🍷 Book VIP Dinner", key="book_ana", use_container_width=True):
+        if st.button("🍷 Book VIP", key="book_ana", use_container_width=True):
             st.success("Reserva solicitada!")
 
-    # Perfil 2 Sugerido
     st.markdown(
         """
         <div class="neon-card" style="margin-top: 15px;">
@@ -204,9 +198,9 @@ elif st.session_state.pagina_atual == "Sampa Match":
     col3, col4 = st.columns(2)
     with col3:
         if st.button("✨ Connect", key="conn_carlos", use_container_width=True):
-            st.success("Conexão solicitada com Carlos Ribeiro!")
+            st.success("Conexão solicitada!")
     with col4:
-        if st.button("🍷 Book VIP Dinner", key="book_carlos", use_container_width=True):
+        if st.button("🍷 Book VIP", key="book_carlos", use_container_width=True):
             st.success("Reserva solicitada!")
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -240,7 +234,7 @@ elif st.session_state.pagina_atual == "GPS Indoor":
 
     render_flow_ai_footer()
 
-# ----------------- TELA: COMPRAS & GASTRONOMIA (Dual / Vaults) -----------------
+# ----------------- TELA: COMPRAS & GASTRONOMIA -----------------
 elif st.session_state.pagina_atual == "Compras Dual":
     render_top_bar("GASTRONOMIA & VAULTS")
 
