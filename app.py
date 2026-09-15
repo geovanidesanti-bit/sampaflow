@@ -108,9 +108,6 @@ if "pagina_atual" not in st.session_state:
 if "historico_ia" not in st.session_state:
     st.session_state.historico_ia = []
 
-if "reproduzindo_audio" not in st.session_state:
-    st.session_state.reproduzindo_audio = False
-
 def render_top_bar(titulo_pagina="Showcase"):
     st.markdown(
         f"""
@@ -142,7 +139,7 @@ def render_flow_ai_footer():
     )
     
     if audio_gravado:
-        resposta_texto = "✨ [Flow AI Command Processed]: Comando de voz decodificado com sucesso! Ajustando rotas urbanas, filtrando restaurantes parceiros com nota > 4.7 e sincronizando o mapa tático 3D."
+        resposta_texto = "✨ [Flow AI Command Processed]: Comando de voz decodificado com sucesso! Rotas de tráfego atualizadas e parceiros gastronômicos sincronizados com o mapa tático."
         st.session_state.historico_ia.append({
             "pagina": st.session_state.pagina_atual,
             "resposta": resposta_texto
@@ -177,7 +174,6 @@ if st.session_state.pagina_atual == "Home":
         unsafe_allow_html=True,
     )
 
-    # Bloco do Mapa 3D Tático
     st.markdown(
         """
         <div class="neon-card-cyan">
@@ -193,7 +189,6 @@ if st.session_state.pagina_atual == "Home":
         unsafe_allow_html=True,
     )
 
-    # Modo Chuva & Previsão de Demanda
     st.markdown(
         """
         <div class="neon-card">
@@ -228,12 +223,11 @@ if st.session_state.pagina_atual == "Home":
     render_flow_ai_footer()
 
 # ---------------------------------------------------------
-# TELA: SAMPA MATCH (Radar Biz & Player de Áudio Histórico)
+# TELA: SAMPA MATCH (Radar Biz)
 # ---------------------------------------------------------
 elif st.session_state.pagina_atual == "Sampa Match":
     render_top_bar("SAMPA MATCH: Radar Biz")
 
-    # Bloco idêntico ao seu print com o player imersivo do Café Girondino
     st.markdown(
         """
         <div class="neon-card" style="text-align: center;">
@@ -275,7 +269,7 @@ elif st.session_state.pagina_atual == "Sampa Match":
     render_flow_ai_footer()
 
 # ---------------------------------------------------------
-# TELA: GPS INDOOR (Mapa 3D & Localização de Pessoas e Estandes)
+# TELA: GPS INDOOR
 # ---------------------------------------------------------
 elif st.session_state.pagina_atual == "GPS Indoor":
     render_top_bar("GPS INDOOR: Mapa 3D Tático")
@@ -310,28 +304,41 @@ elif st.session_state.pagina_atual == "Compras Dual":
     st.markdown(
         """
         <div class="neon-card">
-            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">☕ Café Girondino (Centro Histórico)</div>
-            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>4.9</b> &nbsp;|&nbsp; 📍 Rua Boa Vista, 365 — Centro Histórico &nbsp;|&nbsp; 🕒 <b>RTC: 12 min</b></div>
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">☕ Café Girondino</div>
+            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.9</b> &nbsp;|&nbsp; 📍 Rua Boa Vista, 365 — Centro Histórico &nbsp;|&nbsp; 🕒 <b>RTC: 12 min</b></div>
             <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Café histórico tradicional com ambiente requintado e curadoria de áudio imersiva ativa pelo SampaFlow.</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
     if st.button("🍽️ Reservar Mesa (Café Girondino)", key="res_gir", use_container_width=True):
-        st.success("Reserva confirmada com prioridade executiva!")
+        st.success("Reserva confirmada com prioridade executiva no Café Girondino!")
 
     st.markdown(
         """
         <div class="neon-card" style="margin-top: 15px;">
             <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍷 The Sãopaulista Undercurrent</div>
-            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>4.8</b> &nbsp;|&nbsp; 📍 Jardins (Vault Secreto) &nbsp;|&nbsp; 🕒 <b>RTC: 8 min</b></div>
+            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.8</b> &nbsp;|&nbsp; 📍 Al. dos Anapurus, 1430 — Jardins (Vault Secreto) &nbsp;|&nbsp; 🕒 <b>RTC: 8 min</b></div>
             <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">A hidden vault born from a forgotten coffee-baron catacomb. Flow AI predicts a high historical intrigue score.</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
     if st.button("🍽️ Reservar Mesa no Vault", key="res_vault", use_container_width=True):
-        st.success("Mesa reservada com sucesso no Vault Secreto!")
+        st.success("Mesa reservada com sucesso no The Sãopaulista Undercurrent!")
+
+    st.markdown(
+        """
+        <div class="neon-card" style="margin-top: 15px;">
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🥩 Figueira Rubaiyat</div>
+            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.9</b> &nbsp;|&nbsp; 📍 R. Haddock Lobo, 1738 — Jardins &nbsp;|&nbsp; 🕒 <b>RTC: 15 min</b></div>
+            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Gastronomia de alta classe integrada ao ecossistema executivo sob uma figueira centenária.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("🍽️ Reservar Mesa (Figueira)", key="res_fig", use_container_width=True):
+        st.success("Reserva prioritária solicitada na Figueira Rubaiyat!")
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⬅️ Voltar ao Início", use_container_width=True):
