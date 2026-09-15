@@ -456,4 +456,63 @@ elif st.session_state.pagina_atual == "Portal Motorista":
             
             foto_mot = st.file_uploader("📸 Foto de Perfil do Motorista", type=["png", "jpg", "jpeg"])
             doc_carro = st.file_uploader("📄 Documento do Carro (CRLV em PDF)", type=["pdf"])
-            cnh_pdf 
+            cnh_pdf = st.file_uploader("📄 CNH em PDF", type=["pdf"])
+            
+            btn_cad_mot = st.form_submit_button("🚀 Enviar Documentos para Aprovação")
+            if btn_cad_mot:
+                st.session_state.motorista_logado = True
+                st.session_state.dados_motorista = {
+                    "nome": nome_mot,
+                    "carro": modelo_carro,
+                    "saldo_pix": 50.00,  # Saldo simulado inicial
+                    "faturamento_total": 0.00
+                }
+                st.success("🎉 Cadastro aprovado automaticamente pela IA! Você já está liberado para ficar online.")
+                st.rerun()
+    else:
+        mot = st.session_state.dados_motorista
+        st.markdown(
+            f"""
+            <div style="background: rgba(0,245,155,0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,245,155,0.4); margin-bottom: 15px;">
+                <b style="color: #00F59B;">Status:</b> ✅ Online & Ativo<br>
+                <b>Motorista:</b> {mot['nome']} ({mot['carro']})<br>
+                <b>Faturamento Total em Corridas:</b> R$ {mot['faturamento_total']:.2f}<br>
+                <b>Taxa da Plataforma (10%):</b> R$ {mot['faturamento_total'] * 0.10:.2f}<br>
+                <b>Saldo de Recarga Pix:</b> R$ {mot['saldo_pix']:.2f}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown("### 💰 Recarga de Saldo via Pix (Taxa de Corridas)")
+        st.markdown("<p style='font-size:12px; color:#9ca3af;'>Gere seu Pix instantâneo para manter o saldo de repasse das taxas de 10% (ex: se faturar R$ 500, a taxa de 10% é R$ 50).</p>", unsafe_allow_html=True)
+
+        valor_recarga = st.number_input("Valor da Recarga Pix (R$)", min_value=10.0, max_value=500.0, value=50.0, step=10.0)
+        if st.button(" gerar QR Code Pix", use_container_width=True):
+            st.markdown(
+                f"""
+                <div style="background: rgba(0,213,255,0.08); border: 1px solid rgba(0,213,255,0.5); padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px;">
+                    <b style="color: #00D2FF;">📱 QR Code Pix Gerado com Sucesso!</b><br>
+                    <span style="font-size: 13px; color: #f3f4f6;">Valor: <b>R$ {valor_recarga:.2f}</b></span><br>
+                    <code style="background: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: block; margin-top: 8px;">00020126580014br.gov.bcb.pix...sampaflow-recarga-pix</code>
+                    <span style="font-size: 11px; color: #00F59B; margin-top: 6px; display: block;">🟢 Pagamento aprovado instantaneamente! Saldo atualizado.</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            st.session_state.dados_motorista["saldo_pix"] += valor_recarga
+
+        st.markdown("---")
+        st.markdown("### 🚘 Simulação de Corrida Recebida")
+        if st.button("Simular Nova Corrida (Ex: Expo Center Norte ➔ Jardins)", use_container_width=True):
+            valor_corrida = 80.00
+            taxa_devida = valor_corrida * 0.10
+            st.success(f"🛎️ Corrida Aceita!\n\n**Destino:** Jardins / Hotel Fasano\n**Valor da Corrida:** R$ {valor_corrida:.2f}\n**Taxa da Plataforma (10%):** R$ {taxa_devida:.2f}\n\n*O saldo foi debitado da sua carteira e o faturamento atualizado.*")
+            st.session_state.dados_motorista["faturamento_total"] += valor_corrida
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+
+    render_flow_ai_footer()
