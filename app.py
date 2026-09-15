@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered",
 )
 
-# Injeção de CSS Customizado (Dark Glassmorphism & Neon)
+# Injeção de CSS Customizado (Dark Glassmorphism, Neon & Barra Fixa Inferior)
 st.markdown(
     """
     <style>
@@ -24,8 +24,8 @@ st.markdown(
         justify-content: space-between;
         align-items: center;
         color: #9ca3af;
-        font-size: 14px;
-        margin-bottom: 20px;
+        font-size: 13px;
+        margin-bottom: 15px;
         padding: 0 5px;
     }
 
@@ -42,37 +42,24 @@ st.markdown(
         -webkit-text-fill-color: transparent;
         display: inline-block;
     }
-    .logo-icon {
-        color: #00F59B;
-        font-size: 28px;
-        vertical-align: middle;
-    }
-
-    .flow-ai-box {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(0, 245, 155, 0.3);
-        backdrop-filter: blur(12px);
-        border-radius: 16px;
-        padding: 12px;
-        text-align: center;
-        margin-bottom: 25px;
-        box-shadow: 0 0 15px rgba(0, 245, 155, 0.1);
-    }
-    .flow-ai-text {
-        color: #00F59B;
-        font-weight: 600;
-        font-size: 14px;
-        margin-top: 5px;
-    }
 
     .neon-card {
-        background: rgba(17, 24, 39, 0.7);
+        background: rgba(17, 24, 39, 0.75);
         border: 1px solid rgba(0, 245, 155, 0.4);
-        backdrop-filter: blur(10px);
-        border-radius: 14px;
-        padding: 18px 20px;
-        margin-bottom: 14px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        padding: 16px 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .flow-ai-footer {
+        background: rgba(8, 11, 17, 0.95);
+        border-top: 1px solid rgba(0, 245, 155, 0.3);
+        padding: 12px 10px;
+        text-align: center;
+        margin-top: 20px;
+        border-radius: 16px 16px 0 0;
     }
     </style>
     """,
@@ -85,67 +72,78 @@ if "pagina_atual" not in st.session_state:
 
 if "usuario_logado" not in st.session_state:
     st.session_state.usuario_logado = {
-        "nome": "Geovani Maciel",
-        "cargo": "CEO & Fundador",
-        "linkedin": "https://linkedin.com/in/geovanimaciel",
-        "bio": "Desenvolvedor de ecossistemas inteligentes em São Paulo.",
+        "nome": "Patrícia Lima",
+        "cargo": "Executiva de Parcerias",
+        "linkedin": "https://linkedin.com/in/patricialima",
     }
 
-if "ultimo_comando" not in st.session_state:
-    st.session_state.ultimo_comando = None
-
-# ----------------- TELA: HOME (Interface Principal) -----------------
-if st.session_state.pagina_atual == "Home":
-
-    # Barra Superior
+# Função padrão para a barra superior em todas as telas
+def render_top_bar(titulo_pagina="Showcase"):
     st.markdown(
-        """
+        f"""
         <div class="top-bar">
-            <span>Showcase</span>
+            <span>⚡ SampaFlow &nbsp;|&nbsp; <b>{titulo_pagina}</b></span>
             <span>📍 Jardins &nbsp; 🌧️ 21°C</span>
         </div>
-    """,
+        """,
         unsafe_allow_html=True,
     )
 
-    # Logo SampaFlow
+# Função padrão para o rodapé fixo do Flow AI em todas as telas
+def render_flow_ai_footer():
+    st.markdown("---")
+    st.markdown(
+        """
+        <div class="flow-ai-footer">
+            <span style="color: #00F59B; font-weight: bold; font-size: 14px;">🎙️ FLOW AI BUTTON</span><br>
+            <span style="color: #9ca3af; font-size: 11px;">TOQUE P/ FALAR</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    # Componente de gravação de voz integrado no rodapé
+    mic_recorder(
+        start_prompt="🔴 Iniciar Gravação de Voz",
+        stop_prompt="⏹️ Parar & Processar IA",
+        key=f"mic_{st.session_state.pagina_atual}",
+    )
+
+# ----------------- TELA: HOME (Dashboard Principal) -----------------
+if st.session_state.pagina_atual == "Home":
+    render_top_bar("Showcase")
+
+    # Logotipo Principal
     st.markdown(
         """
         <div class="logo-container">
-            <span class="logo-icon">⚡</span>
             <span class="logo-title">SAMPAFLOW</span>
         </div>
     """,
         unsafe_allow_html=True,
     )
 
-    # Bloco Flow AI Active
+    # Indicador Flow AI Active
     st.markdown(
         """
-        <div class="flow-ai-box">
-            <div style="font-size: 20px;">💬</div>
-            <div class="flow-ai-text">FLOW AI ACTIVE - PRONTO PARA BUSCA</div>
+        <div class="neon-card" style="text-align: center; border-color: rgba(0, 213, 255, 0.4);">
+            <span style="font-size: 22px;">💬</span>
+            <div style="color: #00D2FF; font-weight: 600; font-size: 14px; margin-top: 4px;">FLOW AI ACTIVE</div>
+            <div style="color: #9ca3af; font-size: 12px;">Pronto para curadoria preditiva e imersiva</div>
         </div>
     """,
         unsafe_allow_html=True,
     )
 
-    # ----------------- BOTÕES DE MÓDULOS -----------------
-
+    # Cards de Módulos (Estilo dos Prints)
     if st.button("🤝  **SAMPA MATCH**\n\n*(Radar Biz)*", use_container_width=True):
         st.session_state.pagina_atual = "Sampa Match"
         st.rerun()
 
-    if st.button(
-        "📍  **GPS INDOOR**\n\n*(Navegar Estandes)*", use_container_width=True
-    ):
+    if st.button("📍  **GPS INDOOR**\n\n*(Navegar Estandes)*", use_container_width=True):
         st.session_state.pagina_atual = "GPS Indoor"
         st.rerun()
 
-    if st.button(
-        "🛍️  **COMPRAS & GASTRONOMIA**\n\n*(Restaurantes, Armazéns e Lojas)*",
-        use_container_width=True,
-    ):
+    if st.button("🛍️  **COMPRAS & GASTRONOMIA**\n\n*(Popular | Luxo)*", use_container_width=True):
         st.session_state.pagina_atual = "Compras Dual"
         st.rerun()
 
@@ -153,152 +151,136 @@ if st.session_state.pagina_atual == "Home":
         st.session_state.pagina_atual = "Sampa Work"
         st.rerun()
 
+    render_flow_ai_footer()
+
+# ----------------- TELA: SAMPA MATCH (Radar & Conexões) -----------------
+elif st.session_state.pagina_atual == "Sampa Match":
+    render_top_bar("SAMPA MATCH: Radar Biz")
+
+    st.markdown(
+        """
+        <div class="neon-card" style="text-align: center;">
+            <div style="color: #00F59B; font-weight: bold; margin-bottom: 8px;">📡 RADAR 360° ATIVO</div>
+            <div style="font-size: 13px; color: #9ca3af; margin-bottom: 12px;">Detectando profissionais e estandes em tempo real no evento.</div>
+            <div style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 20px; border: 1px dashed rgba(0,245,155,0.3);">
+                <span style="font-size: 32px;">🎯</span><br>
+                <span style="color: #00D2FF; font-size: 12px;">142 participantes online na sua zona (Expo Floor A)</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Perfil 1 Sugerido
+    st.markdown(
+        """
+        <div class="neon-card">
+            <b>Ana Mendes</b><br>
+            <span style="color: #00D2FF; font-size: 13px;">📍 Sr. Analyst, Tech Solutions — 50m away</span><br>
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 6px;">Interesses em comum: Inovação B2B, Inteligência Artificial.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("✨ Connect", key="conn_ana", use_container_width=True):
+            st.success("Conexão solicitada com Ana Mendes!")
+    with col2:
+        if st.button("🍷 Book VIP Dinner", key="book_ana", use_container_width=True):
+            st.success("Reserva solicitada!")
+
+    # Perfil 2 Sugerido
+    st.markdown(
+        """
+        <div class="neon-card" style="margin-top: 15px;">
+            <b>Carlos Ribeiro</b><br>
+            <span style="color: #00D2FF; font-size: 13px;">📍 Global Dev — 120m away</span><br>
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 6px;">Interesses em comum: Arquitetura Cloud, Redes.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    col3, col4 = st.columns(2)
+    with col3:
+        if st.button("✨ Connect", key="conn_carlos", use_container_width=True):
+            st.success("Conexão solicitada com Carlos Ribeiro!")
+    with col4:
+        if st.button("🍷 Book VIP Dinner", key="book_carlos", use_container_width=True):
+            st.success("Reserva solicitada!")
+
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button(
-        "👤  **MEU PERFIL & LINKEDIN**", use_container_width=True
-    ):
-        st.session_state.pagina_atual = "Perfil"
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
         st.rerun()
 
-    # ----------------- SEÇÃO DO FLOW AI BUTTON (VOZ) -----------------
-    st.markdown("---")
+    render_flow_ai_footer()
+
+# ----------------- TELA: GPS INDOOR -----------------
+elif st.session_state.pagina_atual == "GPS Indoor":
+    render_top_bar("GPS INDOOR: Mapa 3D")
+    
     st.markdown(
-        "<h4 style='color: #00F59B; text-align: center;'>🎙️ FLOW AI BUTTON (TOQUE P/ FALAR)</h4>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<p style='color: #9ca3af; text-align: center; font-size: 13px;'>Grave seu comando de voz para pesquisar restaurantes, armazéns, locais ou vagas instantaneamente.</p>",
+        """
+        <div class="neon-card">
+            <div style="color: #00D2FF; font-weight: bold; margin-bottom: 6px;">🗺️ NAVEGAÇÃO TÁTICA INTERNA</div>
+            <p style="font-size: 13px; color: #9ca3af;">Destino selecionado: <b>Estande TechInnovate (Pavilhão B)</b></p>
+            <div style="background: rgba(0,213,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(0,213,255,0.2); text-align: center;">
+                <span style="color: #00F59B; font-weight: bold;">➔ Siga em frente por 15 metros</span><br>
+                <span style="font-size: 12px; color: #9ca3af;">Virar à esquerda no corredor principal</span>
+            </div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 
-    # Componente de gravação de áudio do microfone
-    audio_data = mic_recorder(
-        start_prompt="🔴 Iniciar Gravação",
-        stop_prompt="⏹️ Parar e Processar",
-        key="flow_ai_mic",
-    )
-
-    if audio_data:
-        st.success(
-            "🎙️ Áudio capturado com sucesso! A IA (Flow AI) processou seu comando de voz."
-        )
-        # Simulando uma busca inteligente baseada em voz (ex: buscando armazéns ou restaurantes)
-        st.session_state.ultimo_comando = (
-            "Busca por comando de voz: Restaurantes e Armazéns em São Paulo"
-        )
-        st.session_state.pagina_atual = "Resultados Voz"
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
         st.rerun()
 
-# ----------------- TELA DE RESULTADOS DA BUSCA POR VOZ -----------------
-elif st.session_state.pagina_atual == "Resultados Voz":
-    st.markdown(
-        "<h2 style='color: #00F59B;'>🔍 Resultados da Pesquisa por Voz</h2>",
-        unsafe_allow_html=True,
-    )
-    st.info(f"Comando interpretado: *{st.session_state.ultimo_comando}*")
+    render_flow_ai_footer()
 
-    st.markdown("### 🍽️ Restaurantes e Armazéns Encontrados na Região:")
+# ----------------- TELA: COMPRAS & GASTRONOMIA (Dual / Vaults) -----------------
+elif st.session_state.pagina_atual == "Compras Dual":
+    render_top_bar("GASTRONOMIA & VAULTS")
 
     st.markdown(
         """
         <div class="neon-card">
-            <b>1. Armazém & Mercadão Gourmet Paulistano</b><br>
-            <span style='color: #00D2FF;'>📍 Rua Augusta, Jardins - 350m de você</span><br>
-            <p style='color: #9ca3af; font-size: 13px; margin-top: 5px;'>Especializado em queijos artesanais, embutidos e adega subterrânea.</p>
-            <button style='background-color:#00F59B; color:black; border:none; padding:6px 12px; border-radius:4px; font-weight:bold;'>Iniciar Rota</button>
-            <button style='background-color:#00D2FF; color:black; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; margin-left:8px;'>Reservar Mesa</button>
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">THE SÃOPAULISTA UNDERCURRENT</div>
+            <div style="color: #f3f4f6; font-size: 13px; margin: 6px 0;">⭐⭐⭐⭐⭐ 4.8</div>
+            <p style="color: #9ca3af; font-size: 12px;">A hidden vault born from a forgotten coffee-baron catacomb. Flow AI predicts a high historical intrigue score for Patrícia Lima.</p>
         </div>
-        
-        <div class="neon-card">
-            <b>2. Boteco & Vault Secreto do Chef</b><br>
-            <span style='color: #00D2FF;'>📍 Vila Madalena - 1.2km de você</span><br>
-            <p style='color: #9ca3af; font-size: 13px; margin-top: 5px;'>Gastronomia fusão com curadoria de pratos preditivos baseados no seu perfil.</p>
-            <button style='background-color:#00F59B; color:black; border:none; padding:6px 12px; border-radius:4px; font-weight:bold;'>Iniciar Rota</button>
-            <button style='background-color:#00D2FF; color:black; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; margin-left:8px;'>Reservar Mesa</button>
-        </div>
-    """,
+        """,
         unsafe_allow_html=True,
     )
+
+    if st.button("🍽️ RESERVE MINHA MESA", use_container_width=True):
+        st.success("Mesa reservada com sucesso no Vault Secreto!")
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início"):
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
         st.session_state.pagina_atual = "Home"
         st.rerun()
 
-# ----------------- TELA: PERFIL E LINKEDIN -----------------
-elif st.session_state.pagina_atual == "Perfil":
-    st.markdown(
-        "<h2 style='color: #00F59B;'>👤 Cadastro & Perfil Profissional</h2>",
-        unsafe_allow_html=True,
-    )
-    with st.form("form_perfil"):
-        nome_input = st.text_input(
-            "Seu Nome Completo", value=st.session_state.usuario_logado["nome"]
-        )
-        cargo_input = st.text_input(
-            "Cargo / Profissão", value=st.session_state.usuario_logado["cargo"]
-        )
-        linkedin_input = st.text_input(
-            "Link do LinkedIn", value=st.session_state.usuario_logado["linkedin"]
-        )
-        bio_input = st.text_area(
-            "Bio / Resumo do Trabalho",
-            value=st.session_state.usuario_logado["bio"],
-        )
-        salvar = st.form_submit_button("💾 Salvar Informações")
-        if salvar:
-            st.session_state.usuario_logado["nome"] = nome_input
-            st.session_state.usuario_logado["cargo"] = cargo_input
-            st.session_state.usuario_logado["linkedin"] = linkedin_input
-            st.session_state.usuario_logado["bio"] = bio_input
-            st.success("✅ Informações atualizadas com sucesso!")
+    render_flow_ai_footer()
 
-    st.markdown("---")
-    if st.button("⬅️ Voltar ao Início"):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-# ----------------- OUTRAS TELAS DE MÓDULOS -----------------
-elif st.session_state.pagina_atual == "Sampa Match":
-    st.markdown(
-        "<h2 style='color: #00F59B;'>🤝 Sampa Match (Radar Biz)</h2>",
-        unsafe_allow_html=True,
-    )
-    st.info(
-        f"Perfil Ativo: **{st.session_state.usuario_logado['nome']}** | 🔗 [LinkedIn]({st.session_state.usuario_logado['linkedin']})"
-    )
-    if st.button("⬅️ Voltar ao Início"):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-elif st.session_state.pagina_atual == "GPS Indoor":
-    st.markdown(
-        "<h2 style='color: #00D2FF;'>📍 GPS Indoor & Mapeamento 3D</h2>",
-        unsafe_allow_html=True,
-    )
-    st.success("Destino atual: **BOOTH B42: TechInnovate Global**")
-    if st.button("⬅️ Voltar ao Início"):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-elif st.session_state.pagina_atual == "Compras Dual":
-    st.markdown(
-        "<h2 style='color: #00F59B;'>🛍️ Compras & Gastronomia</h2>",
-        unsafe_allow_html=True,
-    )
-    st.write(
-        "Explore armazéns, restaurantes, vaults subterrâneos e rotas customizadas em São Paulo."
-    )
-    if st.button("⬅️ Voltar ao Início"):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
+# ----------------- TELA: SAMPA WORK -----------------
 elif st.session_state.pagina_atual == "Sampa Work":
+    render_top_bar("SAMPA WORK: Jobs")
+
     st.markdown(
-        "<h2 style='color: #00D2FF;'>💼 Sampa Work (Vagas & Jobs)</h2>",
+        """
+        <div class="neon-card">
+            <div style="color: #00D2FF; font-weight: bold;">💼 Concierge Executivo de Luxo</div>
+            <p style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Hotel Fasano Jardins — R$ 12.000 / mês</p>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
-    st.write("• **Concierge de Luxo** - Hotel Fasano Jardins (R$ 12.000/mês)")
-    if st.button("⬅️ Voltar ao Início"):
+
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
         st.session_state.pagina_atual = "Home"
         st.rerun()
+
+    render_flow_ai_footer()
