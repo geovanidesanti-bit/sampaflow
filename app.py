@@ -131,7 +131,6 @@ def render_flow_ai_footer():
         unsafe_allow_html=True,
     )
     
-    # Captura inteligente de voz com resposta interativa da IA
     audio_gravado = mic_recorder(
         start_prompt="🔴 Iniciar Gravação de Voz",
         stop_prompt="⏹️ Parar & Processar IA",
@@ -139,7 +138,7 @@ def render_flow_ai_footer():
     )
     
     if audio_gravado:
-        resposta_texto = "✨ [Flow AI Command Processed]: Comando de voz decodificado com sucesso! Rotas de tráfego atualizadas e parceiros gastronômicos sincronizados com o mapa tático."
+        resposta_texto = "✨ [Flow AI Command Processed]: Comando de voz decodificado com sucesso! Rotas de tráfego, horários de reserva e motoristas parceiros sincronizados."
         st.session_state.historico_ia.append({
             "pagina": st.session_state.pagina_atual,
             "resposta": resposta_texto
@@ -214,6 +213,10 @@ if st.session_state.pagina_atual == "Home":
 
     if st.button("🛍️  **COMPRAS & GASTRONOMIA** — Restaurantes Parceiros & Vaults", use_container_width=True):
         st.session_state.pagina_atual = "Compras Dual"
+        st.rerun()
+
+    if st.button("🚗  **SAMPA DRIVE** — Transfer & Motoristas Executivos", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Drive"
         st.rerun()
 
     if st.button("💼  **SAMPA WORK** — Jobs & Oportunidades Executivas", use_container_width=True):
@@ -296,51 +299,96 @@ elif st.session_state.pagina_atual == "GPS Indoor":
     render_flow_ai_footer()
 
 # ---------------------------------------------------------
-# TELA: COMPRAS & GASTRONOMIA (Restaurantes Parceiros, Localização, Notas e RTC)
+# TELA: COMPRAS & GASTRONOMIA (Com Seletor de Horário)
 # ---------------------------------------------------------
 elif st.session_state.pagina_atual == "Compras Dual":
     render_top_bar("GASTRONOMIA & RESTAURANTES")
+
+    # Opções de Horários Disponíveis
+    horarios_disponiveis = ["18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"]
 
     st.markdown(
         """
         <div class="neon-card">
             <div style="color: #00F59B; font-weight: bold; font-size: 16px;">☕ Café Girondino</div>
-            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.9</b> &nbsp;|&nbsp; 📍 Rua Boa Vista, 365 — Centro Histórico &nbsp;|&nbsp; 🕒 <b>RTC: 12 min</b></div>
-            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Café histórico tradicional com ambiente requintado e curadoria de áudio imersiva ativa pelo SampaFlow.</p>
+            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.9</b> &nbsp;|&nbsp; 📍 Rua Boa Vista, 365 — Centro &nbsp;|&nbsp; 🕒 <b>RTC: 12 min</b></div>
+            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Café histórico tradicional com curadoria de áudio imersiva ativa.</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    if st.button("🍽️ Reservar Mesa (Café Girondino)", key="res_gir", use_container_width=True):
-        st.success("Reserva confirmada com prioridade executiva no Café Girondino!")
+    horario_gir = st.selectbox("Selecione o Horário (Café Girondino)", horarios_disponiveis, key="sel_gir")
+    if st.button(f"🍽️ Reservar para às {horario_gir} (Café Girondino)", key="res_gir", use_container_width=True):
+        st.success(f"Mesa confirmada no Café Girondino para às {horario_gir}!")
 
     st.markdown(
         """
-        <div class="neon-card" style="margin-top: 15px;">
+        <div class="neon-card" style="margin-top: 20px;">
             <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍷 The Sãopaulista Undercurrent</div>
-            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.8</b> &nbsp;|&nbsp; 📍 Al. dos Anapurus, 1430 — Jardins (Vault Secreto) &nbsp;|&nbsp; 🕒 <b>RTC: 8 min</b></div>
-            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">A hidden vault born from a forgotten coffee-baron catacomb. Flow AI predicts a high historical intrigue score.</p>
+            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.8</b> &nbsp;|&nbsp; 📍 Al. dos Anapurus, 1430 — Jardins &nbsp;|&nbsp; 🕒 <b>RTC: 8 min</b></div>
+            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">A hidden vault born from a forgotten coffee-baron catacomb.</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    if st.button("🍽️ Reservar Mesa no Vault", key="res_vault", use_container_width=True):
-        st.success("Mesa reservada com sucesso no The Sãopaulista Undercurrent!")
+    horario_vault = st.selectbox("Selecione o Horário (The Sãopaulista)", horarios_disponiveis, key="sel_vault")
+    if st.button(f"🍽️ Reservar para às {horario_vault} no Vault", key="res_vault", use_container_width=True):
+        st.success(f"Mesa confirmada no The Sãopaulista Undercurrent para às {horario_vault}!")
 
     st.markdown(
         """
-        <div class="neon-card" style="margin-top: 15px;">
+        <div class="neon-card" style="margin-top: 20px;">
             <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🥩 Figueira Rubaiyat</div>
             <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.9</b> &nbsp;|&nbsp; 📍 R. Haddock Lobo, 1738 — Jardins &nbsp;|&nbsp; 🕒 <b>RTC: 15 min</b></div>
-            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Gastronomia de alta classe integrada ao ecossistema executivo sob uma figueira centenária.</p>
+            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Gastronomia de alta classe integrada ao ecossistema executivo.</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    if st.button("🍽️ Reservar Mesa (Figueira)", key="res_fig", use_container_width=True):
-        st.success("Reserva prioritária solicitada na Figueira Rubaiyat!")
+    horario_fig = st.selectbox("Selecione o Horário (Figueira Rubaiyat)", horarios_disponiveis, key="sel_fig")
+    if st.button(f"🍽️ Reservar para às {horario_fig} (Figueira)", key="res_fig", use_container_width=True):
+        st.success(f"Mesa confirmada na Figueira Rubaiyat para às {horario_fig}!")
 
     st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+
+    render_flow_ai_footer()
+
+# ---------------------------------------------------------
+# TELA: SAMPA DRIVE (Novo Módulo de Transfer & Motoristas)
+# ---------------------------------------------------------
+elif st.session_state.pagina_atual == "Sampa Drive":
+    render_top_bar("SAMPA DRIVE: Transfer Executivo")
+
+    st.markdown(
+        """
+        <div class="neon-card-cyan">
+            <div style="color: #00D2FF; font-weight: bold; font-size: 15px; margin-bottom: 6px;">🚗 CHAMAR TRANSFER / MOTORISTA PARCEIRO</div>
+            <p style="font-size: 13px; color: #d1d5db;">Conexão direta com motoristas executivos cadastrados na rede SampaFlow operando nos Jardins e Centro.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    destino_transfer = st.text_input("Qual o seu destino?", "Ex: Café Girondino ou Av. Berrini, 1500")
+    tipo_veiculo = st.selectbox("Categoria do Veículo:", ["Sedan Executivo (Toyota Corolla / Fusion)", "SUV Premium (Jeep Commander / SW4)", "Blindado Executivo Security"])
+
+    if st.button("🚘 Solicitar Motorista Agora", use_container_width=True):
+        st.success(f"🚗 Transfer solicitado com sucesso!\n\n**Veículo:** {tipo_veiculo}\n**Destino:** {destino_transfer}\n\n*Motorista Carlos Silva (Toyota Corolla Prata - Placa ABC-1234) aceitou a corrida. Tempo estimado de chegada: 3 minutos.*")
+
+    st.markdown("---")
+    st.markdown(
+        """
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold; font-size: 14px; margin-bottom: 4px;">🔒 É motorista cadastrado?</div>
+            <p style="font-size: 12px; color: #d1d5db;">Seus chamados e rotas otimizadas por IA aparecem automaticamente sincronizados com o seu painel de parceiro SampaDrive.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     if st.button("⬅️ Voltar ao Início", use_container_width=True):
         st.session_state.pagina_atual = "Home"
         st.rerun()
@@ -369,3 +417,4 @@ elif st.session_state.pagina_atual == "Sampa Work":
         st.rerun()
 
     render_flow_ai_footer()
+    
