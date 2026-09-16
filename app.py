@@ -1,5 +1,4 @@
- import streamlit as st
-from streamlit_mic_recorder import mic_recorder
+import streamlit as st
 
 # Configuração da Página
 st.set_page_config(
@@ -180,7 +179,6 @@ def render_top_bar(titulo_pagina="SampaFlow"):
         """,
         unsafe_allow_html=True,
     )
-    # Letreiro dinâmico no topo estilo propaganda de rádio/metrópole
     st.markdown(
         """
         <div class="marquee-container">
@@ -197,21 +195,18 @@ def render_flow_ai_footer():
     st.markdown(
         """
         <div class="flow-ai-footer">
-            <span style="color: #00F59B; font-weight: bold; font-size: 14px;">🎙️ FLOW AI BUTTON</span><br>
-            <span style="color: #9ca3af; font-size: 11px;">TOQUE P/ FALAR OU CONSULTAR O ECOSSISTEMA</span>
+            <span style="color: #00F59B; font-weight: bold; font-size: 14px;">🎙️ FLOW AI AUDIO INTERACTION</span><br>
+            <span style="color: #9ca3af; font-size: 11px;">GRAVE SUA VOZ OU COMANDO PARA CONSULTAR O ECOSSISTEMA</span>
         </div>
         """,
         unsafe_allow_html=True,
     )
     
-    audio_gravado = mic_recorder(
-        start_prompt="🔴 Iniciar Gravação de Voz",
-        stop_prompt="⏹️ Parar & Processar IA",
-        key=f"mic_{st.session_state.pagina_atual}",
-    )
+    # Substituído por st.audio_input nativo para evitar erros de dependência externa
+    audio_gravado = st.audio_input("Grave seu comando de voz para a Flow AI", key=f"audio_input_{st.session_state.pagina_atual}")
     
     if audio_gravado:
-        resposta_texto = "✨ [Flow AI Command Processed]: Rota recalculada, match corporativo validado e radar sincronizado com sucesso."
+        resposta_texto = "✨ [Flow AI Command Processed]: Rota recalculada, match corporativo validado e radar sincronizado com sucesso via áudio."
         st.session_state.historico_ia.append({
             "pagina": st.session_state.pagina_atual,
             "resposta": resposta_texto
@@ -246,7 +241,6 @@ if st.session_state.pagina_atual == "Home":
         unsafe_allow_html=True,
     )
 
-    # Atalhos rápidos de acesso
     col_u1, col_u2 = st.columns(2)
     with col_u1:
         if st.button("🚗 Portal do Motorista", use_container_width=True):
@@ -257,13 +251,11 @@ if st.session_state.pagina_atual == "Home":
             st.session_state.pagina_atual = "Cadastro Usuario"
             st.rerun()
 
-    # Seção: Menu de Eventos e Feiras
     st.markdown("### 🏛️ Menu de Grandes Pavilhões & Feiras de SP")
     if st.button("📂 Abrir Diretório Geral de Exposições & Feiras", use_container_width=True):
         st.session_state.pagina_atual = "Lista Eventos"
         st.rerun()
 
-    # Seção: Perfis de Destaque na Tela Principal (Estilo LinkedIn com 5 estrelas)
     st.markdown("### ⭐ Perfis em Destaque no Ecossistema (Networking)")
     
     perfis_home = [
@@ -501,328 +493,4 @@ elif st.session_state.pagina_atual == "Dashboard Evento":
 
     elif aba_escolhida == "🏢 Empresas do Estande & Nichos":
         st.markdown("### 📋 Cadastro de Empresas do Estande & Nichos de Parceria")
-        st.markdown("<p style='font-size:12px; color:#9ca3af;'>Cadastre sua empresa expositora ou busque parcerias contratuais por nicho específico.</p>", unsafe_allow_html=True)
-
-        with st.form("form_cad_empresa_estande"):
-            nome_empresa = st.text_input("Nome da Empresa Expositora", "Ex: TechInnovate Pavilhão A")
-            nicho_alvo = st.selectbox("Nicho Específico para Contratos", ["Tecnologia", "Logística", "Saúde", "Varejo", "Energia"])
-            descricao_parceria = st.text_area("O que sua empresa busca em parcerias B2B?", "Ex: Buscamos fornecedores de software em nuvem e integradores de logística...")
-            btn_pub_empresa = st.form_submit_button("✨ Publicar Empresa no Estande")
-            if btn_pub_empresa:
-                st.success(f"Empresa '{nome_empresa}' cadastrada com sucesso no diretório do pavilhão!")
-
-        st.markdown("---")
-        st.markdown("#### 🔍 Empresas Exibidoras Cadastradas no Pavilhão")
-        st.markdown("""
-        * **TechInnovate Cloud** (Tecnologia) — *Busca integradores B2B*
-        * **Sampa Cargo Express** (Logística) — *Busca armazéns e frotas parceiras*
-        * **MedTech Diagnósticos** (Saúde) — *Busca hospitais e clínicas*
-        """)
-
-    elif aba_escolhida == "📸 Publicações & Feed":
-        st.markdown("### 📸 Feed de Fotos & Momentos do Evento")
-        
-        if st.session_state.usuario_logado and st.session_state.dados_usuario["tipo"] == "Exibidor / Empresa no Estande":
-            with st.form("form_post_feed"):
-                legenda_foto = st.text_input("Escreva uma legenda para sua publicação", "Visite nosso estande no pavilhão principal!")
-                foto_feed = st.file_uploader("Enviar Foto do Estande / Novidade", type=["png", "jpg", "jpeg"])
-                enviar_post = st.form_submit_button("🚀 Publicar no Feed do Evento")
-                if enviar_post:
-                    st.success("📸 Foto publicada com sucesso no feed geral!")
-        else:
-            st.info("💡 Apenas usuários cadastrados como **Exibidor / Empresa no Estande** podem publicar fotos oficiais no feed. Visitantes podem interagir e dar likes.")
-
-        st.markdown("---")
-        st.markdown(
-            """
-            <div class="neon-card">
-                <div style="color: #00F59B; font-weight: bold; font-size: 13px;">🏢 TechInnovate Cloud <span style="color:#9ca3af; font-size:11px;">(Exibidor)</span></div>
-                <p style="font-size: 12px; color: #d1d5db; margin-top: 4px;">Lançamento oficial da nossa plataforma de IA no Expo Center Norte! Venha conferir o estande 42.</p>
-                <div style="background: rgba(0,213,255,0.05); height: 100px; border-radius: 8px; text-align: center; padding-top: 35px; color: #00D2FF; font-size: 12px; border: 1px dashed rgba(0,213,255,0.3); margin-top: 8px;">
-                    🖼️ [Foto Oficial do Estande Carregada]
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-    render_flow_ai_footer()
-
-# ---------------------------------------------------------
-# TELA 4: SAMPA MATCH GERAL
-# ---------------------------------------------------------
-elif st.session_state.pagina_atual == "Sampa Match Geral":
-    render_top_bar("SAMPA MATCH: Radar & Áudio")
-
-    st.markdown(
-        """
-        <div class="neon-card" style="text-align: center;">
-            <div style="color: #00F59B; font-weight: bold; font-size: 14px; margin-bottom: 8px;">🎧 GUIA DE ÁUDIO IMERSIVO: CENTRO HISTÓRICO</div>
-            <div style="font-size: 13px; color: #ffffff; font-weight: bold; margin-bottom: 4px;">Café Girondino</div>
-            <div style="font-size: 11px; color: #9ca3af; margin-bottom: 12px;">Fundado em 1554, o coração da metrópole guarda séculos de histórias...</div>
-            <div style="background: rgba(0,245,155,0.08); border-radius: 10px; padding: 15px; border: 1px solid rgba(0,245,155,0.3);">
-                <span style="font-size: 24px; color: #00F59B;">||| |||| | |||||| || | ||||</span><br>
-                <span style="font-size: 12px; color: #00D2FF; margin-top: 6px; display: block;">▶️ Reproduzindo Trilha Histórica (01:45 / 03:20)</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-        <div class="neon-card">
-            <div style="color: #ffffff; font-weight: bold; font-size: 15px;">Ana Mendes</div>
-            <div style="color: #00D2FF; font-size: 13px; margin: 2px 0;">📍 Sr. Analyst, Tech Solutions — 50m away</div>
-            <p style="color: #d1d5db; font-size: 12px; margin-top: 6px;">Interesses em comum: Inovação B2B, Inteligência Artificial.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("✨ Connect", key="c_ana", use_container_width=True):
-            st.success("Conexão solicitada com Ana Mendes!")
-    with col2:
-        if st.button("🍷 Book VIP", key="b_ana", use_container_width=True):
-            st.success("Reserva VIP solicitada!")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-    render_flow_ai_footer()
-
-# ---------------------------------------------------------
-# TELA 5: GPS INDOOR
-# ---------------------------------------------------------
-elif st.session_state.pagina_atual == "GPS Indoor":
-    render_top_bar("GPS INDOOR: Mapa 3D Tático")
-    
-    st.markdown(
-        """
-        <div class="neon-card-cyan">
-            <div style="color: #00D2FF; font-weight: bold; font-size: 15px; margin-bottom: 6px;">🗺️ MAPA 3D DE LOCALIZAÇÃO EM TEMPO REAL</div>
-            <p style="font-size: 13px; color: #d1d5db;">Rastreamento ativo de participantes e pontos de interesse na zona.</p>
-            <div style="background: rgba(0,213,255,0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,213,255,0.3); margin-top: 10px;">
-                <b style="color: #00F59B;">📍 Ponto Atual:</b> Pavilhão Principal (Expo Floor A)<br>
-                <b style="color: #00F59B;">🎯 Destino Rastreado:</b> Estande TechInnovate (Apenas 15m de distância)<br>
-                <span style="font-size: 12px; color: #9ca3af; margin-top: 6px; display: block;">➔ Siga em frente pelo corredor norte e vire à esquerda.</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-    render_flow_ai_footer()
-
-# ---------------------------------------------------------
-# TELA 6: COMPRAS & GASTRONOMIA
-# ---------------------------------------------------------
-elif st.session_state.pagina_atual == "Compras Dual":
-    render_top_bar("GASTRONOMIA & RESTAURANTES")
-
-    horarios_disponiveis = ["18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"]
-
-    st.markdown(
-        """
-        <div class="neon-card">
-            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">☕ Café Girondino</div>
-            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.9</b> &nbsp;|&nbsp; 📍 Rua Boa Vista, 365 — Centro &nbsp;|&nbsp; 🕒 <b>RTC: 12 min</b></div>
-            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Café histórico tradicional com curadoria de áudio imersiva ativa.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    horario_gir = st.selectbox("Selecione o Horário (Café Girondino)", horarios_disponiveis, key="sel_gir")
-    if st.button(f"🍽️ Reservar para às {horario_gir} (Café Girondino)", key="res_gir", use_container_width=True):
-        st.success(f"Mesa confirmada no Café Girondino para às {horario_gir}!")
-
-    st.markdown(
-        """
-        <div class="neon-card" style="margin-top: 20px;">
-            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍷 The Sãopaulista Undercurrent</div>
-            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.8</b> &nbsp;|&nbsp; 📍 Al. dos Anapurus, 1430 — Jardins &nbsp;|&nbsp; 🕒 <b>RTC: 8 min</b></div>
-            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">A hidden vault born from a forgotten coffee-baron catacomb.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    horario_vault = st.selectbox("Selecione o Horário (The Sãopaulista)", horarios_disponiveis, key="sel_vault")
-    if st.button(f"🍽️ Reservar para às {horario_vault} no Vault", key="res_vault", use_container_width=True):
-        st.success(f"Mesa confirmada no The Sãopaulista Undercurrent para às {horario_vault}!")
-
-    st.markdown(
-        """
-        <div class="neon-card" style="margin-top: 20px;">
-            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🥩 Figueira Rubaiyat</div>
-            <div style="color: #f3f4f6; font-size: 13px; margin: 4px 0;">⭐ <b>Nota: 4.9</b> &nbsp;|&nbsp; 📍 R. Haddock Lobo, 1738 — Jardins &nbsp;|&nbsp; 🕒 <b>RTC: 15 min</b></div>
-            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">Gastronomia de alta classe integrada ao ecossistema executivo.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    horario_fig = st.selectbox("Selecione o Horário (Figueira Rubaiyat)", horarios_disponiveis, key="sel_fig")
-    if st.button(f"🍽️ Reservar para às {horario_fig} (Figueira)", key="res_fig", use_container_width=True):
-        st.success(f"Mesa confirmada na Figueira Rubaiyat para às {horario_fig}!")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-    render_flow_ai_footer()
-
-# ---------------------------------------------------------
-# TELA 7: SAMPA WORK
-# ---------------------------------------------------------
-elif st.session_state.pagina_atual == "Sampa Work":
-    render_top_bar("SAMPA WORK: Jobs")
-
-    st.markdown(
-        """
-        <div class="neon-card">
-            <div style="color: #00D2FF; font-weight: bold; font-size: 15px;">💼 Concierge Executivo de Luxo</div>
-            <p style="font-size: 13px; color: #d1d5db; margin-top: 6px;">Hotel Fasano Jardins — R$ 12.000 / mês</p>
-            <p style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Compatibilidade com seu perfil executivo calculada em 96% pela Flow AI.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-    render_flow_ai_footer()
-
-# ---------------------------------------------------------
-# TELA 8: PORTAL DO MOTORISTA COM RADAR TIPO UBER (ACEITAR/REJEITAR)
-# ---------------------------------------------------------
-elif st.session_state.pagina_atual == "Portal Motorista":
-    render_top_bar("Portal do Motorista SampaDrive")
-
-    st.markdown(
-        """
-        <div class="neon-card-cyan">
-            <div style="color: #00D2FF; font-weight: bold; font-size: 15px; margin-bottom: 6px;">🚗 PAINEL DE MOTORISTA & RADAR DE CORRIDAS</div>
-            <p style="font-size: 13px; color: #d1d5db;">Fique online para receber chamadas de passageiros nos pavilhões e feiras de São Paulo. Taxa fixa de apenas 10%.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    if not st.session_state.motorista_logado:
-        with st.form("form_cad_motorista"):
-            st.markdown("### Credenciamento de Motorista")
-            nome_mot = st.text_input("Nome Completo do Motorista", "Carlos Silva")
-            tel_mot = st.text_input("Telefone / WhatsApp", "(11) 98888-7777")
-            modelo_carro = st.text_input("Modelo e Placa do Veículo", "Toyota Corolla Prata — ABC-1234")
-            
-            foto_mot = st.file_uploader("📸 Foto de Perfil do Motorista", type=["png", "jpg", "jpeg"])
-            doc_carro = st.file_uploader("📄 Documento do Carro (CRLV em PDF)", type=["pdf"])
-            cnh_pdf = st.file_uploader("📄 CNH em PDF", type=["pdf"])
-            
-            btn_cad_mot = st.form_submit_button("🚀 Enviar Documentos para Aprovação")
-            if btn_cad_mot:
-                st.session_state.motorista_logado = True
-                st.session_state.dados_motorista = {
-                    "nome": nome_mot,
-                    "carro": modelo_carro,
-                    "saldo_pix": 50.00,
-                    "faturamento_total": 0.00
-                }
-                st.success("🎉 Cadastro aprovado automaticamente pela IA! Você já está liberado para ficar online.")
-                st.rerun()
-    else:
-        mot = st.session_state.dados_motorista
-        st.markdown(
-            f"""
-            <div style="background: rgba(0,245,155,0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,245,155,0.4); margin-bottom: 15px;">
-                <b style="color: #00F59B;">Status:</b> ✅ Online & Buscando Passageiros<br>
-                <b>Motorista:</b> {mot['nome']} ({mot['carro']})<br>
-                <b>Faturamento Total:</b> R$ {mot['faturamento_total']:.2f} &nbsp;|&nbsp; <b>Taxa (10%):</b> R$ {mot['faturamento_total'] * 0.10:.2f}<br>
-                <b>Saldo Pix:</b> R$ {mot['saldo_pix']:.2f}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # RADAR DE CORRIDAS (Estilo Aplicativo de Mobilidade - Aceitar / Rejeitar)
-        st.markdown("### 📡 Radar de Solicitações em Tempo Real")
-        
-        if st.session_state.corrida_ativa["ativa"]:
-            corrida = st.session_state.corrida_ativa
-            st.markdown(
-                f"""
-                <div class="ride-request-box">
-                    <div style="color: #00F59B; font-weight: bold; font-size: 15px;">🚨 NOVA SOLICITAÇÃO DE CORRIDA!</div>
-                    <div style="color: #ffffff; font-size: 14px; margin-top: 6px;">👤 <b>Passageiro(a):</b> {corrida['passageiro']}</div>
-                    <div style="color: #d1d5db; font-size: 13px; margin: 4px 0;">📍 <b>Origem:</b> {corrida['origem']}</div>
-                    <div style="color: #d1d5db; font-size: 13px; margin: 4px 0;">🎯 <b>Destino:</b> {corrida['destino']}</div>
-                    <div style="color: #00D2FF; font-size: 14px; font-weight: bold; margin-top: 6px;">💰 Valor Estimado: R$ {corrida['valor']:.2f} &nbsp;|&nbsp; 📏 {corrida['distancia']}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            col_r1, col_r2 = st.columns(2)
-            with col_r1:
-                if st.button("✅ ACEITAR CORRIDA", use_container_width=True):
-                    taxa_corrida = corrida['valor'] * 0.10
-                    st.session_state.dados_motorista["faturamento_total"] += corrida['valor']
-                    st.session_state.corrida_ativa["ativa"] = False
-                    st.success(f"🎉 Corrida aceita com sucesso! Dirija-se ao ponto de embarque. Taxa debitada: R$ {taxa_corrida:.2f}")
-                    st.rerun()
-            with col_r2:
-                if st.button("❌ REJEITAR", use_container_width=True):
-                    st.session_state.corrida_ativa["ativa"] = False
-                    st.warning("Chamada rejeitada. Buscando nova solicitação no radar...")
-                    st.rerun()
-        else:
-            st.info("🛰️ Radar ativo... Aguardando novas chamadas de participantes nos pavilhões.")
-            if st.button("Simular Chegada de Nova Corrida ao Radar", use_container_width=True):
-                st.session_state.corrida_ativa = {
-                    "ativa": True,
-                    "passageiro": "Dr. Roberto Sampaio (CEO MedTech)",
-                    "origem": "São Paulo Expo (Imigrantes)",
-                    "destino": "Figueira Rubaiyat (Jardins)",
-                    "valor": 95.00,
-                    "distancia": "6.8 km (18 min)"
-                }
-                st.rerun()
-
-        st.markdown("---")
-        st.markdown("### 💰 Recarga de Saldo via Pix (Taxas)")
-        valor_recarga = st.number_input("Valor da Recarga Pix (R$)", min_value=10.0, max_value=500.0, value=50.0, step=10.0)
-        if st.button("📱 Gerar QR Code Pix", use_container_width=True):
-            st.markdown(
-                f"""
-                <div style="background: rgba(0,213,255,0.08); border: 1px solid rgba(0,213,255,0.5); padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px;">
-                    <b style="color: #00D2FF;">📱 QR Code Pix Gerado com Sucesso!</b><br>
-                    <span style="font-size: 13px; color: #f3f4f6;">Valor: <b>R$ {valor_recarga:.2f}</b></span><br>
-                    <code style="background: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: block; margin-top: 8px;">00020126580014br.gov.bcb.pix...sampaflow-recarga-pix</code>
-                    <span style="font-size: 11px; color: #00F59B; margin-top: 6px; display: block;">🟢 Pagamento aprovado instantaneamente!</span>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.session_state.dados_motorista["saldo_pix"] += valor_recarga
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
-        st.rerun()
-
-    render_flow_ai_footer()
-     
+        st.markdown("<p style='font-size:12px; color:#9ca3af;'>Cadastre sua empresa expositora ou 
