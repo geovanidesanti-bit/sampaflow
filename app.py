@@ -190,40 +190,43 @@ if "evento_selecionado" not in st.session_state:
         "desc": "O maior evento de inovação mobile e lançamentos de dispositivos da América Latina."
     }
 
-if "corrida_atual" not in st.session_state:
-    st.session_state.corrida_atual = {
-        "ativa": True,
-        "origem": "Transamérica Expo Center",
-        "destino": "Av. Paulista, 1000 — Bela Vista",
-        "valor": 55.00,
-        "distancia": "5.5 km (10 min)",
-        "passageiro": "Carlos Eduardo (Nota ⭐ 4.9)"
-    }
-
 if "cupom_gerado" not in st.session_state:
     st.session_state.cupom_gerado = None
 
-if "lista_matches" not in st.session_state:
-    st.session_state.lista_matches = [
-        {"nome": "Ana Mendes", "empresa": "Samsung Partner", "estande": "Estande 15", "status": "Conectado & Café Agendado"}
-    ]
+# --- MENU LATERAL DE SEGURANÇA (GARANTE A NAVEGAÇÃO NO MOBILE) ---
+with st.sidebar:
+    st.markdown("### ⚡ Navegação SampaFlow")
+    if st.button("🏠 Voltar ao Hub Central", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    if st.button("🍷 Sampa Date", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Date"
+        st.rerun()
+    if st.button("🚀 Painel do Evento", use_container_width=True):
+        st.session_state.pagina_atual = "Dashboard Evento"
+        st.rerun()
+    if st.button("🚗 Portal do Motorista", use_container_width=True):
+        st.session_state.pagina_atual = "Portal Motorista"
+        st.rerun()
+    if st.button("✏️ Editar Perfil", use_container_width=True):
+        st.session_state.pagina_atual = "Cadastro Usuario"
+        st.rerun()
+    st.markdown("---")
+    st.caption("SampaFlow v2.5 • SP 2026")
 
 def gerar_resposta_ia_contextual(pagina, input_usuario=""):
-    """Motor de IA inteligente que gera respostas com base na página atual e contexto urbano."""
     if pagina == "Home":
-        return "🤖 [Flow AI]: Olá! O hub central está operando em capacidade máxima. Noite perfeita em São Paulo com 22°C. O módulo 'Sampa Date' está ativo para planejar seu encontro!"
+        return "🤖 [Flow AI]: Hub central operando em capacidade máxima. Noite perfeita em São Paulo com 22°C!"
     elif pagina == "Sampa Date":
-        return "🤖 [Flow AI]: Analisando o perfil do date + clima de 22°C: Locais com iluminação baixa, massas artesanais e carta de vinhos selecionados garantem 100% de sucesso sem surpresas na conta."
+        return "🤖 [Flow AI]: Analisando o perfil + clima de 22°C: Locais aconchegantes com massas e vinhos selecionados garantem 100% de sucesso."
     elif pagina == "Dashboard Evento":
-        return f"🤖 [Flow AI]: Analisando o {st.session_state.evento_selecionado['pavilhao']}: Pico de tráfego detectado no corredor principal. O estande da {st.session_state.dados_usuario['empresa']} possui alta conversão!"
+        return f"🤖 [Flow AI]: Analisando o {st.session_state.evento_selecionado['pavilhao']}: Pico de tráfego detectado no corredor principal."
     elif pagina == "Compras Dual":
-        return "🤖 [Flow AI]: Sugestão inteligente: Com 22°C, os restaurantes parceiros com mesas ao ar livre e aconchego estão com alta procura. Seu cupom de 10% está pronto!"
-    elif pagina == "Passeios e Cultura":
-        return "🤖 [Flow AI]: Roteiro cultural otimizado: Museus e centros cobertos abertos com cafeterias charmosas para curtir a noite de São Paulo."
+        return "🤖 [Flow AI]: Restaurantes parceiros com mesas ao ar livre em alta procura. Seu cupom de 10% está pronto!"
     elif pagina == "Portal Motorista":
-        return "🤖 [Flow AI]: Radar tático de trânsito: Alta demanda de passageiros saindo de eventos e restaurantes. Tarifas dinâmicas ativas!"
+        return "🤖 [Flow AI]: Radar tático: Alta demanda de passageiros saindo de eventos e restaurantes."
     else:
-        return f"🤖 [Flow AI]: Comando processado com sucesso para a seção '{pagina}'. Sincronização realizada!"
+        return f"🤖 [Flow AI]: Sincronização realizada para '{pagina}'."
 
 def render_top_bar(titulo_pagina="SampaFlow"):
     st.markdown(
@@ -255,7 +258,7 @@ def render_flow_ai_footer():
     )
     
     if audio_gravado:
-        resposta_texto = gerar_resposta_ia_contextual(st.session_state.pagina_atual, "Comando de voz do usuário")
+        resposta_texto = gerar_resposta_ia_contextual(st.session_state.pagina_atual, "Comando de voz")
         st.session_state.historico_ia.append({
             "pagina": st.session_state.pagina_atual,
             "resposta": resposta_texto
@@ -308,7 +311,7 @@ if pagina == "Home":
 
     col_u1, col_u2 = st.columns(2)
     with col_u1:
-        if st.button("🚗 Portal do Motorista (Radar)", use_container_width=True):
+        if st.button("🚗 Portal do Motorista", use_container_width=True):
             st.session_state.pagina_atual = "Portal Motorista"
             st.rerun()
     with col_u2:
@@ -317,24 +320,24 @@ if pagina == "Home":
             st.rerun()
 
     st.markdown("### 🏛️ Menu Principal & Novidades")
-    if st.button("🍷 SAMPA DATE — O Guia do Encontro Perfeito", use_container_width=True):
+    if st.button("🍷 SAMPA DATE — O Guia do Encontro", use_container_width=True):
         st.session_state.pagina_atual = "Sampa Date"
         st.rerun()
-    if st.button("🚀 Acessar Painel do Evento Atual", use_container_width=True):
+    if st.button("🚀 Painel do Evento Atual", use_container_width=True):
         st.session_state.pagina_atual = "Dashboard Evento"
         st.rerun()
 
     st.markdown("### 🌐 Outros Módulos")
-    if st.button("🤝 SAMPA MATCH — Radar & Conexões B2B", use_container_width=True):
+    if st.button("🤝 SAMPA MATCH — Radar B2B", use_container_width=True):
         st.session_state.pagina_atual = "Sampa Match Geral"
         st.rerun()
     if st.button("📍 GPS INDOOR — Mapa Tático", use_container_width=True):
         st.session_state.pagina_atual = "GPS Indoor"
         st.rerun()
-    if st.button("🛍️ GASTRONOMIA — 300 Restaurantes (10% OFF)", use_container_width=True):
+    if st.button("🛍️ GASTRONOMIA — 10% OFF", use_container_width=True):
         st.session_state.pagina_atual = "Compras Dual"
         st.rerun()
-    if st.button("🎭 PASSEIOS & CULTURA — O que fazer em SP Hoje?", use_container_width=True):
+    if st.button("🎭 PASSEIOS & CULTURA", use_container_width=True):
         st.session_state.pagina_atual = "Passeios e Cultura"
         st.rerun()
 
@@ -346,10 +349,9 @@ elif pagina == "Sampa Date":
     st.markdown(
         """
         <div class="neon-card">
-            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍷 Planeje o Date Perfeito sem Errar e sem Surpresas!</div>
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍷 Planeje o Date Perfeito sem Errar!</div>
             <p style="font-size: 12px; color: #d1d5db; margin-top: 6px; line-height: 1.4;">
-                Está fazendo <b>22°C</b> agora à noite em São Paulo — uma temperatura deliciosa para sair! 
-                Conte para o nosso assistente como é a sua companhia, o estilo dela e o que ela gosta. O SampaFlow vai indicar o restaurante sob medida, os pratos de maior sucesso e o **gasto médio estimado para o casal** para você ir totalmente preparado.
+                Está fazendo <b>22°C</b> agora à noite em São Paulo. O SampaFlow indica o restaurante sob medida e a <b>previsão de gastos para o casal</b>.
             </p>
         </div>
         """,
@@ -357,106 +359,154 @@ elif pagina == "Sampa Date":
     )
 
     with st.form("form_sampa_date"):
-        st.markdown("#### 📝 Descreva a sua companhia para a IA calibrar o local:")
+        st.markdown("#### 📝 Descreva a sua companhia:")
         estilo_parceira = st.selectbox(
-            "1. Como ela se veste / Qual o estilo predominante?",
+            "1. Estilo predominante da companhia:",
             [
-                "Elegante / Sofisticada (Gosta de lugares refinados e boa iluminação)",
-                "Casual / Descontraída (Prefere lugares aconchegantes, rústicos ou animados)",
-                "Moderna / Alternativa (Curte arte, centros históricos e bares conceituais)",
-                "Romântica / Clássica (Adora jantar à luz de velas, massas e vinhos)"
+                "Elegante / Sofisticada (Lugares refinados)",
+                "Casual / Descontraída (Lugares aconchegantes e rústicos)",
+                "Moderna / Alternativa (Bares conceituais)",
+                "Romântica / Clássica (Luz de velas e massas)"
             ]
         )
         
         experiencia_previa = st.selectbox(
-            "2. Ela já conhece os clássicos tradicionais de São Paulo (ex: Bixiga / Centro)?",
+            "2. Conhece os clássicos tradicionais de São Paulo?",
             [
-                "Nunca foi / Pouco hábito com os clássicos tradicionais",
-                "Já conhece um pouco, mas adora novidades",
-                "É super fã de comida tradicional e porções fartas"
+                "Nunca foi / Pouco hábito com os clássicos",
+                "Já conhece um pouco",
+                "É super fã de comida tradicional"
             ]
         )
 
         tipo_cozinha_date = st.selectbox(
-            "3. Qual culinária tem mais a ver com a ocasião de hoje?",
+            "3. Culinária preferida para a ocasião:",
             [
-                "Italiana Tradicional & Massas Artesanais (Ex: Famiglia Mancini)",
-                "Contemporânea & Bistrô Francês / Íntimo",
-                "Japonesa Sofisticada & Drinks Exclusivos",
+                "Italiana Tradicional & Massas Artesanais",
+                "Contemporânea & Bistrô Francês",
+                "Japonesa Sofisticada & Drinks",
                 "Comida Mineira ou Brasileira Afetiva"
             ]
         )
 
-        btn_gerar_date = st.form_submit_button("✨ Revelar a Sugestão Perfeita para o Date")
+        btn_gerar_date = st.form_submit_button("✨ Revelar Sugestão para o Date")
 
-    if btn_gerar_date or "sugeriu_date" in st.session_state:
+    if btn_gerar_date or st.session_state.get("sugeriu_date", False):
         st.session_state.sugeriu_date = True
-        
         st.markdown("---")
-        st.markdown("### 🏆 Sugestão Exclusiva do SampaFlow para Hoje à Noite:")
+        st.markdown("### 🏆 Sugestão Exclusiva do SampaFlow:")
         
-        if "Italiana" in tipo_cozinha_date:
-            st.markdown(
-                """
-                <div class="neon-card-cyan" style="border: 1px solid #00F59B;">
-                    <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍝 Destino Sugerido: Famiglia Mancini (Bela Vista / Centro)</div>
-                    <div style="color: #00D2FF; font-size: 13px; margin: 4px 0;">📍 <b>Endereço:</b> Rua Avanhandava, 81 — Centro (Região iluminada e segura)</div>
-                    <div style="color: #ffffff; font-size: 13px; margin-top: 8px;"><b>🌡️ Condição Climática:</b> 22°C (Perfeito para caminhar na charmosa e iluminada Rua Avanhandava após o jantar).</div>
-                    
-                    <hr style="border-color: rgba(0,213,255,0.2); margin: 10px 0;">
-                    <div style="color: #f3f4f6; font-size: 12px;">
-                        <b>🎯 Por que vai impressionar a gata?</b><br>
-                        O ambiente é icônico, repleto de antiguidades e com uma atmosfera acolhedora espetacular. Como ela não tem o hábito de frequentar os clássicos paulistanos, o visual imersivo vai surpreendê-la positivamente.
-                    </div>
-                    
-                    <div style="margin-top: 10px; color: #f3f4f6; font-size: 12px;">
-                        <b>🍲 Pratos Recomendados para Pedir:</b><br>
-                        • Fettuccine artesanal com molho de camarão e ervas finas.<br>
-                        • Escalope à Parmegiana (famoso pela fartura e sabor inigualável).
-                    </div>
-                    
-                    <div style="background: rgba(0,245,155,0.1); border: 1px solid rgba(0,245,155,0.4); border-radius: 10px; padding: 10px; margin-top: 12px;">
-                        <span style="color: #00F59B; font-weight: bold; font-size: 14px;">💰 Previsão de Gastos para o Casal:</span><br>
-                        <span style="color: #ffffff; font-size: 13px;">Média de <b>R$ 220 a R$ 300</b> (incluindo prato principal bem servido para compartilhar, bebidas não alcoólicas/vinho da casa e serviço). Você já vai sabendo exatamente quanto programar na carteira!</span>
-                    </div>
+        st.markdown(
+            """
+            <div class="neon-card-cyan" style="border: 1px solid #00F59B;">
+                <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍝 Destino Sugerido: Famiglia Mancini (Bela Vista)</div>
+                <div style="color: #00D2FF; font-size: 13px; margin: 4px 0;">📍 <b>Endereço:</b> Rua Avanhandava, 81 — Centro</div>
+                <div style="color: #ffffff; font-size: 13px; margin-top: 8px;"><b>🌡️ Clima:</b> 22°C (Perfeito para caminhar na charmosa Rua Avanhandava).</div>
+                
+                <div style="background: rgba(0,245,155,0.1); border: 1px solid rgba(0,245,155,0.4); border-radius: 10px; padding: 10px; margin-top: 12px;">
+                    <span style="color: #00F59B; font-weight: bold; font-size: 14px;">💰 Previsão de Gastos para o Casal:</span><br>
+                    <span style="color: #ffffff; font-size: 13px;">Média de <b>R$ 220 a R$ 300</b> (prato principal generoso, bebidas e serviço).</span>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        else:
-            st.markdown(
-                """
-                <div class="neon-card-cyan" style="border: 1px solid #00F59B;">
-                    <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍷 Destino Sugerido: Bistrô Al Mare & Rooftop (Itaim Bibi)</div>
-                    <div style="color: #00D2FF; font-size: 13px; margin: 4px 0;">📍 <b>Endereço:</b> Rua Brisamar, 220 — Itaim Bibi</div>
-                    <div style="color: #ffffff; font-size: 13px; margin-top: 8px;"><b>🌡️ Condição Climática:</b> 22°C (Clima agradabilíssimo para mesas na varanda iluminada).</div>
-                    
-                    <hr style="border-color: rgba(0,213,255,0.2); margin: 10px 0;">
-                    <div style="color: #f3f4f6; font-size: 12px;">
-                        <b>🎯 Por que vai impressionar a gata?</b><br>
-                        Ambiente extremamente charmoso, música ambiente suave e atendimento impecável. Ideal para conversas longas e momentos marcantes.
-                    </div>
-                    
-                    <div style="margin-top: 10px; color: #f3f4f6; font-size: 12px;">
-                        <b>🍲 Pratos Recomendados para Pedir:</b><br>
-                        • Risoto de Funghi com filé mignon grelhado.<br>
-                        • Taças de vinho tinto selecionado pelo sommelier.
-                    </div>
-                    
-                    <div style="background: rgba(0,245,155,0.1); border: 1px solid rgba(0,245,155,0.4); border-radius: 10px; padding: 10px; margin-top: 12px;">
-                        <span style="color: #00F59B; font-weight: bold; font-size: 14px;">💰 Previsão de Gastos para o Casal:</span><br>
-                        <span style="color: #ffffff; font-size: 13px;">Média de <b>R$ 250 a R$ 350</b> (incluindo entrada, prato principal para dois e bebidas). Zero surpresas na hora de fechar a conta!</span>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-        if st.button("🎁 Gerar Cupom de 10% OFF para este Date"):
+        if st.button("🎁 Gerar Cupom de 10% OFF"):
             hash_date = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
             st.session_state.cupom_gerado = f"SAMPA-DATE-{hash_date}-10OFF"
-            st.success(f"Cupom gerado com sucesso: {st.session_state.cupom_gerado} (Válido no restaurante escolhido!)")
+            st.success(f"Cupom gerado: {st.session_state.cupom_gerado}")
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início"):
-        st.session_state
+    if st.button("⬅️ Voltar ao Início (Principal)", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Cadastro Usuario":
+    render_top_bar("Perfil & Credenciamento")
+    with st.form("form_cad"):
+        nome_input = st.text_input("Nome Completo", st.session_state.dados_usuario["nome"])
+        cargo_input = st.text_input("Cargo", st.session_state.dados_usuario["cargo"])
+        empresa_input = st.text_input("Empresa", st.session_state.dados_usuario["empresa"])
+        estande_input = st.text_input("Estande", st.session_state.dados_usuario["estande"])
+        
+        if st.form_submit_button("✅ Salvar Alterações"):
+            st.session_state.dados_usuario.update({
+                "nome": nome_input, "cargo": cargo_input, "empresa": empresa_input, "estande": estande_input
+            })
+            st.success("Perfil atualizado!")
+            st.session_state.pagina_atual = "Home"
+            st.rerun()
+            
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Dashboard Evento":
+    ev = st.session_state.evento_selecionado
+    render_top_bar(ev['pavilhao'])
+    st.markdown(
+        f"""
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🏢 {ev['nome']}</div>
+            <p style="color: #d1d5db; font-size: 12px; margin-top: 5px;">{ev['desc']}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Sampa Match Geral":
+    render_top_bar("SAMPA MATCH B2B")
+    st.markdown('<div class="neon-card"><div style="color: #00F59B;">Ana Mendes (⭐ 4.9) — Samsung Partner</div></div>', unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "GPS Indoor":
+    render_top_bar("GPS INDOOR")
+    st.markdown('<div class="waze-radar-box"><div style="color: #00D2FF; font-weight: bold;">🗺️ Transamérica Expo Center</div></div>', unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Compras Dual":
+    render_top_bar("Gastronomia 10% OFF")
+    st.markdown('<div class="neon-card"><div style="color: #00F59B;">Rede de Restaurantes Parceiros SampaFlow</div></div>', unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Passeios e Cultura":
+    render_top_bar("Guia de Passeios")
+    st.markdown('<div class="neon-card"><div style="color: #00F59B;">O que fazer em São Paulo hoje</div></div>', unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Portal Motorista":
+    render_top_bar("Portal do Motorista")
+    mot = st.session_state.dados_motorista
+    st.markdown(
+        f"""
+        <div class="neon-card-cyan">
+            <b>Motorista:</b> {mot['nome']} ({mot['carro']})<br>
+            <b>Saldo Pix:</b> R$ {mot['saldo_pix']:.2f}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+    
