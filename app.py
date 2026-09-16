@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered",
 )
 
-# --- INICIALIZAÇÃO SEGURA DE VARIÁVEIS DE SESSÃO (CORREÇÃO DE ERRO) ---
+# --- INICIALIZAÇÃO SEGURA DE VARIÁVEIS DE SESSÃO ---
 if "pagina_atual" not in st.session_state:
     st.session_state.pagina_atual = "Home"
 
@@ -33,9 +33,12 @@ if "dados_usuario" not in st.session_state:
 if "dados_motorista" not in st.session_state:
     st.session_state.dados_motorista = {
         "nome": "Geovani Santi",
-        "carro": "Renault Kwid 2020 Prata",
-        "saldo_pix": 120.00,
-        "faturamento_total": 450.00
+        "carro": "Renault Kwid Zen 2020 Prata",
+        "placa": "ABC-1D23",
+        "saldo_pix": 180.50,
+        "faturamento_total": 540.00,
+        "corridas_realizadas": 14,
+        "avaliacao": "⭐ 4.92 (312 avaliações)"
     }
 
 if "evento_selecionado" not in st.session_state:
@@ -83,7 +86,7 @@ st.markdown(
     .ticker-text {
         display: inline-block;
         padding-left: 100%;
-        animation: marquee 24s linear infinite;
+        animation: marquee 26s linear infinite;
         color: #00D2FF;
         font-size: 12px;
         font-weight: 600;
@@ -180,7 +183,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- MENU LATERAL DE SEGURANÇA (GARANTE A NAVEGAÇÃO NO MOBILE) ---
+# --- MENU LATERAL DE SEGURANÇA ---
 with st.sidebar:
     st.markdown("### ⚡ Navegação SampaFlow")
     if st.button("🏠 Voltar ao Hub Central", use_container_width=True, key="sb_home"):
@@ -198,23 +201,34 @@ with st.sidebar:
     if st.button("🚗 Portal do Motorista", use_container_width=True, key="sb_motorista"):
         st.session_state.pagina_atual = "Portal Motorista"
         st.rerun()
+    if st.button("📍 GPS Indoor", use_container_width=True, key="sb_gps"):
+        st.session_state.pagina_atual = "GPS Indoor"
+        st.rerun()
+    if st.button("🛍️ Gastronomia & Cupons", use_container_width=True, key="sb_gast"):
+        st.session_state.pagina_atual = "Compras Dual"
+        st.rerun()
+    if st.button("🎭 Passeios & Cultura", use_container_width=True, key="sb_cult"):
+        st.session_state.pagina_atual = "Passeios e Cultura"
+        st.rerun()
     if st.button("✏️ Editar Perfil", use_container_width=True, key="sb_perfil"):
         st.session_state.pagina_atual = "Cadastro Usuario"
         st.rerun()
     st.markdown("---")
-    st.caption("SampaFlow v2.7 • SP 2026")
+    st.caption("SampaFlow v2.8 • SP 2026")
 
 def gerar_resposta_ia_contextual(pagina, input_usuario=""):
     if pagina == "Home":
-        return "🤖 [Flow AI]: Hub central operando em capacidade máxima. Noite perfeita em São Paulo com 22°C!"
+        return "🤖 [Flow AI]: Hub central operando em capacidade máxima. São Paulo com 22°C e clima excelente!"
     elif pagina == "Sampa Date":
-        return "🤖 [Flow AI]: Analisando o perfil + clima de 22°C: Locais aconchegantes com massas e vinhos selecionados garantem 100% de sucesso."
+        return "🤖 [Flow AI]: Roteiro gastronômico cruzado com sucesso. Famiglia Mancini na Rua Avanhandava é a escolha ideal para hoje."
     elif pagina == "Dashboard Evento":
-        return f"🤖 [Flow AI]: Transamérica ao vivo: 8.420 visitantes ativos no momento e alta captação de leads no estande 12."
+        return "🤖 [Flow AI]: Transamérica Expo Center ao vivo: Fluxo intenso e 8.420 visitantes ativos circulando nos corredores."
     elif pagina == "Sampa Match Geral":
-        return "🤖 [Flow AI]: Sampa Match ativo! Detectados 14 executivos com sinergia de negócios nos corredores próximos."
+        return "🤖 [Flow AI]: Sampa Match ativo! Detectados executivos com alta sinergia comercial no seu setor."
     elif pagina == "Portal Motorista":
-        return "🤖 [Flow AI]: Radar tático: Alta demanda de passageiros saindo dos pavilhões e restaurantes."
+        return "🤖 [Flow AI]: Radar de mobilidade: Alta demanda de passageiros saindo do Transamérica e polos corporativos."
+    elif pagina == "Passeios e Cultura":
+        return "🤖 [Flow AI]: Dicas culturais carregadas: Parques abertos, exposições noturnas no MASP e Pinacoteca selecionadas."
     else:
         return f"🤖 [Flow AI]: Sincronização realizada para '{pagina}'."
 
@@ -223,7 +237,7 @@ def render_top_bar(titulo_pagina="SampaFlow"):
         """
         <div class="ticker-container">
             <div class="ticker-text">
-                ⚡ SampaFlow Info: São Paulo • 15 de Setembro de 2026 • 🌙 22°C • Noite Agradável • Perfeita para um Sampa Date inesquecível com 10% OFF nos melhores restaurantes! 🍷✨
+                ⚡ SampaFlow Info: São Paulo • 15 de Setembro de 2026 • 🌙 22°C • Noite Agradável • Transamérica Expo Center com 8.420 visitantes ativos • 10% OFF em restaurantes parceiros! 🍷✨
             </div>
         </div>
         """,
@@ -267,7 +281,7 @@ def render_flow_ai_footer():
                 unsafe_allow_html=True,
             )
 
-# Roteador de Páginas
+# --- ROTEADOR DE PÁGINAS ---
 pagina = st.session_state.pagina_atual
 
 if pagina == "Home":
@@ -317,7 +331,7 @@ if pagina == "Home":
         st.session_state.pagina_atual = "Dashboard Evento"
         st.rerun()
 
-    st.markdown("### 🌐 Outros Módulos")
+    st.markdown("### 🌐 Outros Módulos & Inteligência Urbana")
     if st.button("🤝 SAMPA MATCH / MEET — Radar B2B", use_container_width=True, key="btn_h_match"):
         st.session_state.pagina_atual = "Sampa Match Geral"
         st.rerun()
@@ -341,7 +355,7 @@ elif pagina == "Sampa Date":
         <div class="neon-card">
             <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🍷 Planeje o Date Perfeito sem Errar e sem Surpresas!</div>
             <p style="font-size: 12px; color: #d1d5db; margin-top: 6px; line-height: 1.4;">
-                Está fazendo <b>22°C</b> agora à noite em São Paulo — uma temperatura deliciosa para sair! Conte para o nosso assistente como é a sua companhia, o estilo dela e o que ela gosta. O SampaFlow vai indicar o restaurante sob medida, os pratos de maior sucesso e o *gasto médio estimado para o casal* para você ir totalmente preparado.
+                Está fazendo <b>22°C</b> agora à noite em São Paulo — uma temperatura deliciosa para sair! Conte para o nosso assistente como é a sua companhia, o estilo dela e o que ela gosta. O SampaFlow vai indicar o restaurante sob medida, os pratos de maior sucesso e o *gasto médio estimado para o casal*.
             </p>
         </div>
         """,
@@ -479,22 +493,4 @@ elif pagina == "Dashboard Evento":
 
     if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_ev"):
         st.session_state.pagina_atual = "Home"
-        st.rerun()
-    render_flow_ai_footer()
-
-elif pagina == "Sampa Match Geral":
-    render_top_bar("SAMPA MATCH / MEET — Networking B2B")
-    
-    st.markdown(
-        """
-        <div class="neon-card">
-            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🤝 Conexões Inteligentes em Grandes Feiras</div>
-            <p style="font-size: 12px; color: #d1d5db; margin-top: 6px; line-height: 1.4;">
-                O Sampa Match cruza o seu perfil profissional com o de outros decisores presentes no Transamérica Expo Center. Conecte-se, troque contatos e agende cafés de negócios instantaneamente.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.m
+      
