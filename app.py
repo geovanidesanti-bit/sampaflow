@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 from streamlit_mic_recorder import mic_recorder
 
 # Configuração da Página
@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered",
 )
 
-# Injeção de CSS Customizado - Dark Glassmorphism com Fundo Urbano Tático
+# Injeção de CSS Customizado - Dark Glassmorphism, Letreiro Dinâmico & Radar Tático
 st.markdown(
     """
     <style>
@@ -25,13 +25,37 @@ st.markdown(
     }
     header {visibility: hidden;}
     
+    /* Letreiro Animado estilo Propaganda */
+    .marquee-container {
+        background: rgba(0, 213, 255, 0.1);
+        border: 1px solid rgba(0, 213, 255, 0.4);
+        border-radius: 10px;
+        overflow: hidden;
+        white-space: nowrap;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        padding: 8px 0;
+    }
+    .marquee-text {
+        display: inline-block;
+        padding-left: 100%;
+        animation: marquee 18s linear infinite;
+        color: #00D2FF;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    @keyframes marquee {
+        0%   { transform: translate(0, 0); }
+        100% { transform: translate(-100%, 0); }
+    }
+
     .top-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
         color: #9ca3af;
         font-size: 13px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         padding: 0 5px;
     }
 
@@ -68,6 +92,15 @@ st.markdown(
         padding: 18px 20px;
         margin-bottom: 16px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    }
+
+    .ride-request-box {
+        background: rgba(0, 245, 155, 0.08);
+        border: 2px solid #00F59B;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 15px;
+        box-shadow: 0 0 20px rgba(0, 245, 155, 0.3);
     }
 
     .ai-response-box {
@@ -127,12 +160,33 @@ if "motorista_logado" not in st.session_state:
 if "evento_selecionado" not in st.session_state:
     st.session_state.evento_selecionado = None
 
+if "corrida_ativa" not in st.session_state:
+    st.session_state.corrida_ativa = {
+        "ativa": True,
+        "passageiro": "Mariana Souza (Diretora de Contratos)",
+        "origem": "Expo Center Norte — Pavilhão A",
+        "destino": "Hotel Fasano (Jardins)",
+        "valor": 78.50,
+        "distancia": "4.2 km (12 min)"
+    }
+
 def render_top_bar(titulo_pagina="SampaFlow"):
     st.markdown(
         f"""
         <div class="top-bar">
             <span>⚡ SampaFlow &nbsp;|&nbsp; <b>{titulo_pagina}</b></span>
-            <span>📍 São Paulo &nbsp; 🌧️ 21°C</span>
+            <span>📍 São Paulo</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    # Letreiro dinâmico no topo estilo propaganda de rádio/metrópole
+    st.markdown(
+        """
+        <div class="marquee-container">
+            <div class="marquee-text">
+                ⚡ SÃO PAULO | Terça-feira, 15 de Setembro de 2026 | 🌧️ 19°C — Clima chuvoso na metrópole. Perfeito para um caldo quente no Café Girondino ou um jantar reservado no The Sãopaulista Undercurrent! 🍷🍜
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -157,7 +211,7 @@ def render_flow_ai_footer():
     )
     
     if audio_gravado:
-        resposta_texto = "✨ [Flow AI Command Processed]: Sincronização de pavilhões, leads B2B e painel de motoristas processados via inteligência preditiva."
+        resposta_texto = "✨ [Flow AI Command Processed]: Rota recalculada, match corporativo validado e radar sincronizado com sucesso."
         st.session_state.historico_ia.append({
             "pagina": st.session_state.pagina_atual,
             "resposta": resposta_texto
@@ -177,7 +231,7 @@ def render_flow_ai_footer():
             )
 
 # ---------------------------------------------------------
-# TELA 1: HOME - HUB DE EVENTOS E TODOS OS MÓDULOS
+# TELA 1: HOME - HUB DE EVENTOS E PERFIS EM DESTAQUE
 # ---------------------------------------------------------
 if st.session_state.pagina_atual == "Home":
     render_top_bar("Hub Central SP")
@@ -203,7 +257,73 @@ if st.session_state.pagina_atual == "Home":
             st.session_state.pagina_atual = "Cadastro Usuario"
             st.rerun()
 
-    st.markdown("### 🏛️ Grandes Pavilhões & Feiras de São Paulo")
+    # Seção: Menu de Eventos e Feiras
+    st.markdown("### 🏛️ Menu de Grandes Pavilhões & Feiras de SP")
+    if st.button("📂 Abrir Diretório Geral de Exposições & Feiras", use_container_width=True):
+        st.session_state.pagina_atual = "Lista Eventos"
+        st.rerun()
+
+    # Seção: Perfis de Destaque na Tela Principal (Estilo LinkedIn com 5 estrelas)
+    st.markdown("### ⭐ Perfis em Destaque no Ecossistema (Networking)")
+    
+    perfis_home = [
+        {
+            "nome": "Camila Vasconcelos",
+            "cargo": "Head de Inovação & Transformação Digital",
+            "bio": "Especialista em ecossistemas B2B e IA aplicada à indústria 4.0. Conectando marcas globais em São Paulo.",
+            "rating": "★★★★★ (4.9 / 180 conexões)"
+        },
+        {
+            "nome": "Dr. Eduardo Monteiro",
+            "cargo": "Sócio Fundador | Venture Capital & MedTech",
+            "bio": "Investidor focado em scale-ups de tecnologia médica e infraestrutura digital. Palestrante no São Paulo Expo.",
+            "rating": "★★★★★ (5.0 / 215 conexões)"
+        }
+    ]
+
+    for p in perfis_home:
+        st.markdown(
+            f"""
+            <div class="neon-card-cyan">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #ffffff; font-weight: bold; font-size: 15px;">{p['nome']}</span>
+                    <span style="color: #00F59B; font-size: 13px;">{p['rating']}</span>
+                </div>
+                <div style="color: #00D2FF; font-size: 13px; margin: 3px 0; font-weight: bold;">{p['cargo']}</div>
+                <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">{p['bio']}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("### 🌐 Módulos Principais do Ecossistema")
+    
+    if st.button("🤝  **SAMPA MATCH** — Radar Biz & Conexões Gerais", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Match Geral"
+        st.rerun()
+
+    if st.button("📍  **GPS INDOOR** — Mapa Tático & Localização", use_container_width=True):
+        st.session_state.pagina_atual = "GPS Indoor"
+        st.rerun()
+
+    if st.button("🛍️  **GASTRONOMIA & RESERVAS** — Restaurantes com Seletor de Horário", use_container_width=True):
+        st.session_state.pagina_atual = "Compras Dual"
+        st.rerun()
+
+    if st.button("💼  **SAMPA WORK** — Jobs & Oportunidades Executivas", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Work"
+        st.rerun()
+
+    render_flow_ai_footer()
+
+# ---------------------------------------------------------
+# TELA 1.1: LISTA DE EVENTOS E EXPOSIÇÕES (MENU DEDICADO)
+# ---------------------------------------------------------
+elif st.session_state.pagina_atual == "Lista Eventos":
+    render_top_bar("Diretório de Feiras & Expos")
+
+    st.markdown("### 🏛️ Todas as Exposições & Feiras Ativas em São Paulo")
+    st.markdown("<p style='font-size:12px; color:#9ca3af;'>Selecione abaixo o evento para entrar no ecossistema específico do pavilhão.</p>", unsafe_allow_html=True)
 
     pavilhoes_eventos = [
         {
@@ -244,27 +364,14 @@ if st.session_state.pagina_atual == "Home":
             """,
             unsafe_allow_html=True,
         )
-        if st.button(f"🚀 Entrar no Ecossistema: {ev['pavilhao']}", key=f"btn_{ev['id']}", use_container_width=True):
+        if st.button(f"🚀 Entrar no Ecossistema: {ev['pavilhao']}", key=f"menu_ev_{ev['id']}", use_container_width=True):
             st.session_state.evento_selecionado = ev
             st.session_state.pagina_atual = "Dashboard Evento"
             st.rerun()
 
-    st.markdown("### 🌐 Módulos Principais do Ecossistema")
-    
-    if st.button("🤝  **SAMPA MATCH** — Radar Biz & Conexões Gerais", use_container_width=True):
-        st.session_state.pagina_atual = "Sampa Match Geral"
-        st.rerun()
-
-    if st.button("📍  **GPS INDOOR** — Mapa Tático & Localização", use_container_width=True):
-        st.session_state.pagina_atual = "GPS Indoor"
-        st.rerun()
-
-    if st.button("🛍️  **GASTRONOMIA & RESERVAS** — Restaurantes com Seletor de Horário", use_container_width=True):
-        st.session_state.pagina_atual = "Compras Dual"
-        st.rerun()
-
-    if st.button("💼  **SAMPA WORK** — Jobs & Oportunidades Executivas", use_container_width=True):
-        st.session_state.pagina_atual = "Sampa Work"
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
         st.rerun()
 
     render_flow_ai_footer()
@@ -440,7 +547,7 @@ elif st.session_state.pagina_atual == "Dashboard Evento":
         )
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar aos Pavilhões", use_container_width=True):
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
         st.session_state.pagina_atual = "Home"
         st.rerun()
 
@@ -600,7 +707,7 @@ elif st.session_state.pagina_atual == "Sampa Work":
     render_flow_ai_footer()
 
 # ---------------------------------------------------------
-# TELA 8: PORTAL DO MOTORISTA
+# TELA 8: PORTAL DO MOTORISTA COM RADAR TIPO UBER (ACEITAR/REJEITAR)
 # ---------------------------------------------------------
 elif st.session_state.pagina_atual == "Portal Motorista":
     render_top_bar("Portal do Motorista SampaDrive")
@@ -608,8 +715,8 @@ elif st.session_state.pagina_atual == "Portal Motorista":
     st.markdown(
         """
         <div class="neon-card-cyan">
-            <div style="color: #00D2FF; font-weight: bold; font-size: 15px; margin-bottom: 6px;">🚗 CADASTRO & PAINEL DE MOTORISTA EXECUTIVO</div>
-            <p style="font-size: 13px; color: #d1d5db;">Cadastre sua foto, documento do veículo e CNH em PDF. Após validação instantânea, fique online para aceitar corridas com taxa fixa de 10%.</p>
+            <div style="color: #00D2FF; font-weight: bold; font-size: 15px; margin-bottom: 6px;">🚗 PAINEL DE MOTORISTA & RADAR DE CORRIDAS</div>
+            <p style="font-size: 13px; color: #d1d5db;">Fique online para receber chamadas de passageiros nos pavilhões e feiras de São Paulo. Taxa fixa de apenas 10%.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -642,19 +749,61 @@ elif st.session_state.pagina_atual == "Portal Motorista":
         st.markdown(
             f"""
             <div style="background: rgba(0,245,155,0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,245,155,0.4); margin-bottom: 15px;">
-                <b style="color: #00F59B;">Status:</b> ✅ Online & Ativo<br>
+                <b style="color: #00F59B;">Status:</b> ✅ Online & Buscando Passageiros<br>
                 <b>Motorista:</b> {mot['nome']} ({mot['carro']})<br>
-                <b>Faturamento Total em Corridas:</b> R$ {mot['faturamento_total']:.2f}<br>
-                <b>Taxa da Plataforma (10%):</b> R$ {mot['faturamento_total'] * 0.10:.2f}<br>
-                <b>Saldo de Recarga Pix:</b> R$ {mot['saldo_pix']:.2f}
+                <b>Faturamento Total:</b> R$ {mot['faturamento_total']:.2f} &nbsp;|&nbsp; <b>Taxa (10%):</b> R$ {mot['faturamento_total'] * 0.10:.2f}<br>
+                <b>Saldo Pix:</b> R$ {mot['saldo_pix']:.2f}
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        st.markdown("### 💰 Recarga de Saldo via Pix (Taxa de Corridas)")
-        st.markdown("<p style='font-size:12px; color:#9ca3af;'>Gere seu Pix instantâneo para manter o saldo de repasse das taxas de 10% (ex: se faturar R$ 500, a taxa de 10% é R$ 50).</p>", unsafe_allow_html=True)
+        # RADAR DE CORRIDAS (Estilo Aplicativo de Mobilidade - Aceitar / Rejeitar)
+        st.markdown("### 📡 Radar de Solicitações em Tempo Real")
+        
+        if st.session_state.corrida_ativa["ativa"]:
+            corrida = st.session_state.corrida_ativa
+            st.markdown(
+                f"""
+                <div class="ride-request-box">
+                    <div style="color: #00F59B; font-weight: bold; font-size: 15px;">🚨 NOVA SOLICITAÇÃO DE CORRIDA!</div>
+                    <div style="color: #ffffff; font-size: 14px; margin-top: 6px;">👤 <b>Passageiro(a):</b> {corrida['passageiro']}</div>
+                    <div style="color: #d1d5db; font-size: 13px; margin: 4px 0;">📍 <b>Origem:</b> {corrida['origem']}</div>
+                    <div style="color: #d1d5db; font-size: 13px; margin: 4px 0;">🎯 <b>Destino:</b> {corrida['destino']}</div>
+                    <div style="color: #00D2FF; font-size: 14px; font-weight: bold; margin-top: 6px;">💰 Valor Estimado: R$ {corrida['valor']:.2f} &nbsp;|&nbsp; 📏 {corrida['distancia']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
+            col_r1, col_r2 = st.columns(2)
+            with col_r1:
+                if st.button("✅ ACEITAR CORRIDA", use_container_width=True):
+                    taxa_corrida = corrida['valor'] * 0.10
+                    st.session_state.dados_motorista["faturamento_total"] += corrida['valor']
+                    st.session_state.corrida_ativa["ativa"] = False
+                    st.success(f"🎉 Corrida aceita com sucesso! Dirija-se ao ponto de embarque. Taxa debitada: R$ {taxa_corrida:.2f}")
+                    st.rerun()
+            with col_r2:
+                if st.button("❌ REJEITAR", use_container_width=True):
+                    st.session_state.corrida_ativa["ativa"] = False
+                    st.warning("Chamada rejeitada. Buscando nova solicitação no radar...")
+                    st.rerun()
+        else:
+            st.info("🛰️ Radar ativo... Aguardando novas chamadas de participantes nos pavilhões.")
+            if st.button("Simular Chegada de Nova Corrida ao Radar", use_container_width=True):
+                st.session_state.corrida_ativa = {
+                    "ativa": True,
+                    "passageiro": "Dr. Roberto Sampaio (CEO MedTech)",
+                    "origem": "São Paulo Expo (Imigrantes)",
+                    "destino": "Figueira Rubaiyat (Jardins)",
+                    "valor": 95.00,
+                    "distancia": "6.8 km (18 min)"
+                }
+                st.rerun()
+
+        st.markdown("---")
+        st.markdown("### 💰 Recarga de Saldo via Pix (Taxas)")
         valor_recarga = st.number_input("Valor da Recarga Pix (R$)", min_value=10.0, max_value=500.0, value=50.0, step=10.0)
         if st.button("📱 Gerar QR Code Pix", use_container_width=True):
             st.markdown(
@@ -663,20 +812,12 @@ elif st.session_state.pagina_atual == "Portal Motorista":
                     <b style="color: #00D2FF;">📱 QR Code Pix Gerado com Sucesso!</b><br>
                     <span style="font-size: 13px; color: #f3f4f6;">Valor: <b>R$ {valor_recarga:.2f}</b></span><br>
                     <code style="background: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: block; margin-top: 8px;">00020126580014br.gov.bcb.pix...sampaflow-recarga-pix</code>
-                    <span style="font-size: 11px; color: #00F59B; margin-top: 6px; display: block;">🟢 Pagamento aprovado instantaneamente! Saldo atualizado.</span>
+                    <span style="font-size: 11px; color: #00F59B; margin-top: 6px; display: block;">🟢 Pagamento aprovado instantaneamente!</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
             st.session_state.dados_motorista["saldo_pix"] += valor_recarga
-
-        st.markdown("---")
-        st.markdown("### 🚘 Simulação de Corrida Recebida")
-        if st.button("Simular Nova Corrida (Ex: Expo Center Norte ➔ Jardins)", use_container_width=True):
-            valor_corrida = 80.00
-            taxa_devida = valor_corrida * 0.10
-            st.success(f"🛎️ Corrida Aceita!\n\n**Destino:** Jardins / Hotel Fasano\n**Valor da Corrida:** R$ {valor_corrida:.2f}\n**Taxa da Plataforma (10%):** R$ {taxa_devida:.2f}\n\n*O saldo foi debitado da sua carteira e o faturamento atualizado.*")
-            st.session_state.dados_motorista["faturamento_total"] += valor_corrida
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⬅️ Voltar ao Início", use_container_width=True):
@@ -684,3 +825,4 @@ elif st.session_state.pagina_atual == "Portal Motorista":
         st.rerun()
 
     render_flow_ai_footer()
+     
