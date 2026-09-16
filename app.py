@@ -214,7 +214,7 @@ with st.sidebar:
         st.session_state.pagina_atual = "Cadastro Usuario"
         st.rerun()
     st.markdown("---")
-    st.caption("SampaFlow v2.8 • SP 2026")
+    st.caption("SampaFlow v2.9 • SP 2026")
 
 def gerar_resposta_ia_contextual(pagina, input_usuario=""):
     if pagina == "Home":
@@ -226,9 +226,9 @@ def gerar_resposta_ia_contextual(pagina, input_usuario=""):
     elif pagina == "Sampa Match Geral":
         return "🤖 [Flow AI]: Sampa Match ativo! Detectados executivos com alta sinergia comercial no seu setor."
     elif pagina == "Portal Motorista":
-        return "🤖 [Flow AI]: Radar de mobilidade: Alta demanda de passageiros saindo do Transamérica e polos corporativos."
+        return "🤖 [Flow AI]: Radar de mobilidade ativado: Alta concentração de chamadas saindo do Transamérica e polos corporativos com tarifa dinâmica."
     elif pagina == "Passeios e Cultura":
-        return "🤖 [Flow AI]: Dicas culturais carregadas: Parques abertos, exposições noturnas no MASP e Pinacoteca selecionadas."
+        return "🤖 [Flow AI]: Dicas culturais carregadas: Parques abertos, exposições noturnas no MASP e Pinacoteca selecionadas para aproveitar os 22°C."
     else:
         return f"🤖 [Flow AI]: Sincronização realizada para '{pagina}'."
 
@@ -493,4 +493,231 @@ elif pagina == "Dashboard Evento":
 
     if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_ev"):
         st.session_state.pagina_atual = "Home"
-      
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Sampa Match Geral":
+    render_top_bar("SAMPA MATCH / MEET — Networking B2B")
+    
+    st.markdown(
+        """
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🤝 Conexões Inteligentes em Grandes Feiras</div>
+            <p style="font-size: 12px; color: #d1d5db; margin-top: 6px; line-height: 1.4;">
+                O Sampa Match cruza o seu perfil profissional com o de outros decisores presentes no Transamérica Expo Center. Conecte-se, troque contatos e agende cafés de negócios instantaneamente.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### 👥 Perfis com Sinergia Próximos de Você:")
+    
+    matches = [
+        {"nome": "Ana Mendes", "cargo": "Head de Parcerias", "empresa": "Samsung Partner", "estande": "Estande 15", "status": "Próximo (15m)"},
+        {"nome": "Carlos Eduardo", "cargo": "Diretor de Tecnologia", "empresa": "Inovação SP Tech", "estande": "Estande 22", "status": "Reunião Livre às 14h"},
+        {"nome": "Juliana Lima", "cargo": "Gerente de Expansão", "empresa": "Varejo Inteligente Brasil", "estande": "Estande 08", "status": "Online no Pavilhão"}
+    ]
+
+    for m in matches:
+        st.markdown(
+            f"""
+            <div class="neon-card-cyan">
+                <div style="color: #00F59B; font-weight: bold; font-size: 14px;">{m['nome']} ({m['cargo']})</div>
+                <div style="color: #f3f4f6; font-size: 12px; margin-top: 2px;">🏢 <b>{m['empresa']}</b> • 📍 {m['estande']}</div>
+                <div style="color: #00D2FF; font-size: 11px; margin-top: 4px;">📡 Status: <b>{m['status']}</b></div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    if st.button("☕ Agendar Café / Conexão Rápida", key="btn_cafe_match"):
+        st.success("Convite de networking enviado com sucesso para a rede de parceiros no evento!")
+
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_match"):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "GPS Indoor":
+    render_top_bar("GPS INDOOR & Mapa Tático")
+    st.markdown(
+        """
+        <div class="waze-radar-box">
+            <div style="color: #00D2FF; font-weight: bold; font-size: 16px;">🗺️ Navegação Interna — Transamérica Expo Center</div>
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 8px;">
+                Sua localização atual: <b>Estande 12 (Corredor Principal B)</b>.<br>
+                Tráfego de visitantes no setor: <b>Alto / Fluido</b>.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    
+    st.markdown("### 📍 Pontos de Interesse Próximos:")
+    st.markdown(
+        """
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold;">☕ Lounge VIP de Cafés & Networking</div>
+            <div style="color: #d1d5db; font-size: 12px;">A apenas 30 metros à sua esquerda (Corredor B).</div>
+        </div>
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold;">🚻 Sanitários & Central de Atendimento</div>
+            <div style="color: #d1d5db; font-size: 12px;">Localizados na Ala Norte do Pavilhão.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_gps"):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Compras Dual":
+    render_top_bar("Gastronomia & Compras — 10% OFF")
+    st.markdown(
+        """
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🛍️ Rede de Descontos Exclusivos em São Paulo</div>
+            <p style="font-size: 12px; color: #d1d5db; margin-top: 6px;">
+                Explore centenas de restaurantes parceiros nos principais polos gastronômicos (Itaim Bibi, Pinheiros, Jardins e Centro) com cupons instantâneos de 10% OFF.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    restaurantes_parceiros = [
+        {"nome": "Fasano (Jardins)", "culinaria": "Italiana Alta Gastronomia", "desconto": "10% OFF com SampaFlow"},
+        {"nome": "A Casa do Porco (Centro)", "culinaria": "Culinária Brasileira Premiada", "desconto": "10% OFF na Fila Preferencial"},
+        {"nome": "Rubaiyat (Itaim Bibi)", "culinaria": "Carnes Nobres & Cortes Especiais", "desconto": "10% OFF no Almoço Executivo"}
+    ]
+
+    for r in restaurantes_parceiros:
+        st.markdown(
+            f"""
+            <div class="neon-card-cyan">
+                <div style="color: #00F59B; font-weight: bold; font-size: 14px;">🍽️ {r['nome']}</div>
+                <div style="color: #f3f4f6; font-size: 12px; margin-top: 2px;">{r['culinaria']}</div>
+                <div style="color: #00D2FF; font-size: 11px; margin-top: 4px;">🏷️ <b>{r['desconto']}</b></div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_gast"):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Passeios e Cultura":
+    render_top_bar("Passeios & Cultura — O que fazer em SP")
+    st.markdown(
+        """
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold; font-size: 16px;">🎭 Roteiros Culturais, Parques e Museus em SP</div>
+            <p style="font-size: 12px; color: #d1d5db; margin-top: 6px; line-height: 1.4;">
+                Aproveite o melhor de São Paulo com sugestões baseadas no clima atual (<b>22°C</b>) e na sua localização próxima aos grandes centros de inovação e lazer.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### 🌳 Parques & Áreas Verdes Recomendados")
+    st.markdown(
+        """
+        <div class="neon-card-cyan">
+            <div style="color: #00F59B; font-weight: bold; font-size: 14px;">🌿 Parque Ibirapuera</div>
+            <div style="color: #f3f4f6; font-size: 12px; margin-top: 2px;">O coração verde de São Paulo. Ótimo para caminhadas ao anoitecer, contemplação do Planetário e arquitetura de Oscar Niemeyer.</div>
+        </div>
+        <div class="neon-card-cyan">
+            <div style="color: #00F59B; font-weight: bold; font-size: 14px;">🌳 Parque Villa-Lobos (Zona Oeste)</div>
+            <div style="color: #f3f4f6; font-size: 12px; margin-top: 2px;">Excelente infraestrutura para ciclovias, patins e apresentações ao ar livre na concha acústica.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### 🏛️ Museus & Exposições em Destaque")
+    st.markdown(
+        """
+        <div class="neon-card-cyan">
+            <div style="color: #00F59B; font-weight: bold; font-size: 14px;">🖼️ MASP (Museu de Arte de São Paulo) — Av. Paulista</div>
+            <div style="color: #f3f4f6; font-size: 12px; margin-top: 2px;">Famoso pelos cavaletes de vidro e acervo internacional de grandes mestres da pintura. Aberto até mais tarde em dias úteis selecionados.</div>
+        </div>
+        <div class="neon-card-cyan">
+            <div style="color: #00F59B; font-weight: bold; font-size: 14px;">🏛️ Pinacoteca de São Paulo (Praça da Luz)</div>
+            <div style="color: #f3f4f6; font-size: 12px; margin-top: 2px;">O museu de arte mais antigo da capital, reunindo esculturas e pinturas históricas em um prédio deslumbrante de tijolos à vista.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_cult"):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Cadastro Usuario":
+    render_top_bar("Editar Perfil Profissional")
+    with st.form("form_cad"):
+        nome_input = st.text_input("Nome Completo", st.session_state.dados_usuario["nome"])
+        cargo_input = st.text_input("Cargo", st.session_state.dados_usuario["cargo"])
+        empresa_input = st.text_input("Empresa", st.session_state.dados_usuario["empresa"])
+        estande_input = st.text_input("Estande", st.session_state.dados_usuario["estande"])
+        
+        if st.form_submit_button("✅ Salvar Alterações"):
+            st.session_state.dados_usuario.update({
+                "nome": nome_input, "cargo": cargo_input, "empresa": empresa_input, "estande": estande_input
+            })
+            st.success("Perfil atualizado com sucesso!")
+            st.session_state.pagina_atual = "Home"
+            st.rerun()
+            
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_cad"):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
+
+elif pagina == "Portal Motorista":
+    render_top_bar("Portal do Motorista & Mobilidade")
+    mot = st.session_state.dados_motorista
+    
+    st.markdown(
+        f"""
+        <div class="neon-card-cyan">
+            <div style="color: #00F59B; font-weight: bold; font-size: 15px;">🚗 {mot['nome']} ({mot['carro']} • Placa: {mot['placa']})</div>
+            <div style="color: #00D2FF; font-size: 13px; margin-top: 6px;">💰 Saldo Disponível via Pix: <b>R$ {mot['saldo_pix']:.2f}</b></div>
+            <div style="color: #ffffff; font-size: 12px; margin-top: 2px;">📈 Faturamento Total do Dia: <b>R$ {mot['faturamento_total']:.2f}</b> ({mot['corridas_realizadas']} corridas)</div>
+            <div style="color: #facc15; font-size: 12px; margin-top: 2px;">Avaliação dos Passageiros: {mot['avaliacao']}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### 📡 Radar Tático de Corridas (Saindo de Grandes Eventos)")
+    st.markdown(
+        """
+        <div class="neon-card">
+            <div style="color: #00F59B; font-size: 14px; font-weight: bold;">🏢 Transamérica Expo Center ➔ Bela Vista</div>
+            <div style="color: #00D2FF; font-size: 12px; margin-top: 4px;">Tarifa Dinâmica Ativa (2.4x) • <b>Valor Estimado: R$ 55,00 a R$ 68,00</b></div>
+            <div style="color: #9ca3af; font-size: 11px; margin-top: 2px;">Distância estimada: 12.4 km • Tempo até o passageiro: 4 mins</div>
+        </div>
+        <div class="neon-card">
+            <div style="color: #00F59B; font-size: 14px; font-weight: bold;">🍷 Itaim Bibi (Polo Gastronômico) ➔ Pinheiros</div>
+            <div style="color: #00D2FF; font-size: 12px; margin-top: 4px;">Alta demanda de casais saindo de restaurantes • <b>Valor Estimado: R$ 38,00</b></div>
+            <div style="color: #9ca3af; font-size: 11px; margin-top: 2px;">Distância estimada: 5.8 km</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if st.button("💵 Solicitar Saque via Pix Instantâneo"):
+        st.success(f"Saque de R$ {mot['saldo_pix']:.2f} solicitado com sucesso para a chave cadastrada!")
+
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_mot"):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+    render_flow_ai_footer()
