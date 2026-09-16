@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_mic_recorder import mic_recorder
 
 # Configuração da Página
 st.set_page_config(
@@ -7,7 +8,7 @@ st.set_page_config(
     layout="centered",
 )
 
-# Injeção de CSS Customizado - Dark Glassmorphism, Letreiro Dinâmico & Radar Tático
+# Injeção de CSS Customizado - Dark Glassmorphism com Fundo Urbano Tático & Animações
 st.markdown(
     """
     <style>
@@ -24,24 +25,25 @@ st.markdown(
     }
     header {visibility: hidden;}
     
-    /* Letreiro Animado estilo Propaganda */
-    .marquee-container {
-        background: rgba(0, 213, 255, 0.1);
-        border: 1px solid rgba(0, 213, 255, 0.4);
-        border-radius: 10px;
+    /* Barra de Notícia Rolando (Marquee) no Topo */
+    .ticker-container {
+        width: 100%;
         overflow: hidden;
+        background: rgba(0, 213, 255, 0.12);
+        border: 1px solid rgba(0, 213, 255, 0.4);
+        border-radius: 8px;
+        padding: 6px 0;
+        margin-bottom: 12px;
         white-space: nowrap;
-        box-sizing: border-box;
-        margin-bottom: 15px;
-        padding: 8px 0;
+        box-shadow: 0 0 10px rgba(0, 213, 255, 0.2);
     }
-    .marquee-text {
+    .ticker-text {
         display: inline-block;
         padding-left: 100%;
-        animation: marquee 18s linear infinite;
+        animation: marquee 22s linear infinite;
         color: #00D2FF;
-        font-size: 13px;
-        font-weight: bold;
+        font-size: 12px;
+        font-weight: 600;
     }
     @keyframes marquee {
         0%   { transform: translate(0, 0); }
@@ -60,10 +62,10 @@ st.markdown(
 
     .logo-container {
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
     .logo-title {
-        font-size: 32px;
+        font-size: 30px;
         font-weight: 900;
         letter-spacing: -1px;
         background: linear-gradient(90deg, #00F59B 0%, #00D2FF 100%);
@@ -73,13 +75,26 @@ st.markdown(
         filter: drop-shadow(0 0 15px rgba(0, 245, 155, 0.4));
     }
 
+    /* Perfil Estilo LinkedIn Compacto na Home */
+    .profile-card-header {
+        background: rgba(10, 15, 26, 0.95);
+        border: 1px solid rgba(0, 245, 155, 0.5);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+
     .neon-card {
         background: rgba(10, 15, 26, 0.92);
         border: 1px solid rgba(0, 245, 155, 0.45);
         backdrop-filter: blur(16px);
         border-radius: 16px;
-        padding: 18px 20px;
-        margin-bottom: 16px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
     }
     
@@ -88,18 +103,9 @@ st.markdown(
         border: 1px solid rgba(0, 213, 255, 0.45);
         backdrop-filter: blur(16px);
         border-radius: 16px;
-        padding: 18px 20px;
-        margin-bottom: 16px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-    }
-
-    .ride-request-box {
-        background: rgba(0, 245, 155, 0.08);
-        border: 2px solid #00F59B;
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 15px;
-        box-shadow: 0 0 20px rgba(0, 245, 155, 0.3);
     }
 
     .ai-response-box {
@@ -118,7 +124,7 @@ st.markdown(
         border: 1px solid rgba(0, 245, 155, 0.6) !important;
         border-radius: 12px !important;
         font-weight: 700 !important;
-        padding: 12px 18px !important;
+        padding: 10px 16px !important;
         transition: all 0.3s ease;
     }
     .stButton > button:hover {
@@ -149,42 +155,57 @@ if "historico_ia" not in st.session_state:
     st.session_state.historico_ia = []
 
 if "usuario_logado" not in st.session_state:
-    st.session_state.usuario_logado = False
-    st.session_state.dados_usuario = {}
+    st.session_state.usuario_logado = True  # Deixamos True para exibir o perfil simulado estilo LinkedIn de pronto
+    st.session_state.dados_usuario = {
+        "nome": "Geovani Santi",
+        "cargo": "Gestão Comercial & Tech Leader",
+        "linkedin": "linkedin.com/in/geovani-santi",
+        "whatsapp": "(11) 99999-9999",
+        "tipo": "Exibidor / Consultor B2B",
+        "empresa": "SampaFlow Consulting",
+        "nicho": "Tecnologia & Varejo",
+        "estrelas": "⭐ 5.0 (48 avaliações)"
+    }
 
 if "motorista_logado" not in st.session_state:
-    st.session_state.motorista_logado = False
-    st.session_state.dados_motorista = {}
+    st.session_state.motorista_logado = True
+    st.session_state.dados_motorista = {
+        "nome": "Geovani Santi",
+        "carro": "Renault Kwid 2020 Prata",
+        "saldo_pix": 120.00,
+        "faturamento_total": 450.00
+    }
 
 if "evento_selecionado" not in st.session_state:
     st.session_state.evento_selecionado = None
 
-if "corrida_ativa" not in st.session_state:
-    st.session_state.corrida_ativa = {
+if "corrida_atual" not in st.session_state:
+    st.session_state.corrida_atual = {
         "ativa": True,
-        "passageiro": "Mariana Souza (Diretora de Contratos)",
-        "origem": "Expo Center Norte — Pavilhão A",
-        "destino": "Hotel Fasano (Jardins)",
-        "valor": 78.50,
-        "distancia": "4.2 km (12 min)"
+        "origem": "Expo Center Norte (Pavilhão A)",
+        "destino": "Rua Augusta, 1500 — Jardins",
+        "valor": 48.50,
+        "distancia": "4.2 km (8 min)",
+        "passageiro": "Mariana Costa (Nota ⭐ 4.9)"
     }
 
 def render_top_bar(titulo_pagina="SampaFlow"):
+    # Mensagem propagando estilo outdoor digital rolando no topo
     st.markdown(
-        f"""
-        <div class="top-bar">
-            <span>⚡ SampaFlow &nbsp;|&nbsp; <b>{titulo_pagina}</b></span>
-            <span>📍 São Paulo</span>
+        """
+        <div class="ticker-container">
+            <div class="ticker-text">
+                ⚡ SampaFlow Info: São Paulo • 15 de Setembro de 2026 • 🌧️ 21°C • Tempo Chuvoso • Ótimo dia para um caldo quente nos restaurantes parceiros do Centro e Jardins! ☕🍲
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
     st.markdown(
-        """
-        <div class="marquee-container">
-            <div class="marquee-text">
-                ⚡ SÃO PAULO | Terça-feira, 15 de Setembro de 2026 | 🌧️ 19°C — Clima chuvoso na metrópole. Perfeito para um caldo quente no Café Girondino ou um jantar reservado no The Sãopaulista Undercurrent! 🍷🍜
-            </div>
+        f"""
+        <div class="top-bar">
+            <span>⚡ SampaFlow &nbsp;|&nbsp; <b>{titulo_pagina}</b></span>
+            <span>📍 São Paulo &nbsp; 🌧️ 21°C</span>
         </div>
         """,
         unsafe_allow_html=True,
@@ -195,18 +216,21 @@ def render_flow_ai_footer():
     st.markdown(
         """
         <div class="flow-ai-footer">
-            <span style="color: #00F59B; font-weight: bold; font-size: 14px;">🎙️ FLOW AI AUDIO INTERACTION</span><br>
-            <span style="color: #9ca3af; font-size: 11px;">GRAVE SUA VOZ OU COMANDO PARA CONSULTAR O ECOSSISTEMA</span>
+            <span style="color: #00F59B; font-weight: bold; font-size: 14px;">🎙️ FLOW AI BUTTON</span><br>
+            <span style="color: #9ca3af; font-size: 11px;">TOQUE P/ FALAR OU CONSULTAR O ECOSSISTEMA</span>
         </div>
         """,
         unsafe_allow_html=True,
     )
     
-    # Substituído por st.audio_input nativo para evitar erros de dependência externa
-    audio_gravado = st.audio_input("Grave seu comando de voz para a Flow AI", key=f"audio_input_{st.session_state.pagina_atual}")
+    audio_gravado = mic_recorder(
+        start_prompt="🔴 Iniciar Gravação de Voz",
+        stop_prompt="⏹️ Parar & Processar IA",
+        key=f"mic_{st.session_state.pagina_atual}",
+    )
     
     if audio_gravado:
-        resposta_texto = "✨ [Flow AI Command Processed]: Rota recalculada, match corporativo validado e radar sincronizado com sucesso via áudio."
+        resposta_texto = "✨ [Flow AI Command Processed]: Sincronização de rotas, radar de motoristas e feiras ativas executada com sucesso."
         st.session_state.historico_ia.append({
             "pagina": st.session_state.pagina_atual,
             "resposta": resposta_texto
@@ -226,7 +250,7 @@ def render_flow_ai_footer():
             )
 
 # ---------------------------------------------------------
-# TELA 1: HOME - HUB DE EVENTOS E PERFIS EM DESTAQUE
+# TELA 1: HOME - PERFIL 5 ESTRELAS, MENU DE EVENTOS E MÓDULOS
 # ---------------------------------------------------------
 if st.session_state.pagina_atual == "Home":
     render_top_bar("Hub Central SP")
@@ -241,82 +265,38 @@ if st.session_state.pagina_atual == "Home":
         unsafe_allow_html=True,
     )
 
+    # 1. Perfil Estilo LinkedIn com Nota 5 Estrelas no Topo
+    user = st.session_state.dados_usuario
+    st.markdown(
+        f"""
+        <div class="profile-card-header">
+            <div>
+                <div style="color: #00F59B; font-weight: bold; font-size: 15px;">👤 {user['nome']} <span style="font-size:12px; color:#00D2FF;">({user['estrelas']})</span></div>
+                <div style="color: #f3f4f6; font-size: 12px; margin-top: 2px;">{user['cargo']} • {user['empresa']}</div>
+                <div style="color: #9ca3af; font-size: 11px; margin-top: 2px;">🔗 {user['linkedin']} | 📱 {user['whatsapp']}</div>
+            </div>
+            <div>
+                <span style="background: rgba(0,245,155,0.15); color: #00F59B; border: 1px solid rgba(0,245,155,0.4); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold;">VERIFICADO</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Atalhos rápidos de acesso
     col_u1, col_u2 = st.columns(2)
     with col_u1:
-        if st.button("🚗 Portal do Motorista", use_container_width=True):
+        if st.button("🚗 Portal do Motorista (Radar)", use_container_width=True):
             st.session_state.pagina_atual = "Portal Motorista"
             st.rerun()
     with col_u2:
-        if st.button("👤 Cadastro / Perfil LinkedIn", use_container_width=True):
+        if st.button("✏️ Editar Perfil LinkedIn", use_container_width=True):
             st.session_state.pagina_atual = "Cadastro Usuario"
             st.rerun()
 
-    st.markdown("### 🏛️ Menu de Grandes Pavilhões & Feiras de SP")
-    if st.button("📂 Abrir Diretório Geral de Exposições & Feiras", use_container_width=True):
-        st.session_state.pagina_atual = "Lista Eventos"
-        st.rerun()
-
-    st.markdown("### ⭐ Perfis em Destaque no Ecossistema (Networking)")
+    # 2. Menu de Eventos (Dropdown / Seletor de Feiras e Exposições)
+    st.markdown("### 🏛️ Menu de Eventos & Exposições em São Paulo")
     
-    perfis_home = [
-        {
-            "nome": "Camila Vasconcelos",
-            "cargo": "Head de Inovação & Transformação Digital",
-            "bio": "Especialista em ecossistemas B2B e IA aplicada à indústria 4.0. Conectando marcas globais em São Paulo.",
-            "rating": "★★★★★ (4.9 / 180 conexões)"
-        },
-        {
-            "nome": "Dr. Eduardo Monteiro",
-            "cargo": "Sócio Fundador | Venture Capital & MedTech",
-            "bio": "Investidor focado em scale-ups de tecnologia médica e infraestrutura digital. Palestrante no São Paulo Expo.",
-            "rating": "★★★★★ (5.0 / 215 conexões)"
-        }
-    ]
-
-    for p in perfis_home:
-        st.markdown(
-            f"""
-            <div class="neon-card-cyan">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #ffffff; font-weight: bold; font-size: 15px;">{p['nome']}</span>
-                    <span style="color: #00F59B; font-size: 13px;">{p['rating']}</span>
-                </div>
-                <div style="color: #00D2FF; font-size: 13px; margin: 3px 0; font-weight: bold;">{p['cargo']}</div>
-                <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 6px;">{p['bio']}</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    st.markdown("### 🌐 Módulos Principais do Ecossistema")
-    
-    if st.button("🤝  **SAMPA MATCH** — Radar Biz & Conexões Gerais", use_container_width=True):
-        st.session_state.pagina_atual = "Sampa Match Geral"
-        st.rerun()
-
-    if st.button("📍  **GPS INDOOR** — Mapa Tático & Localização", use_container_width=True):
-        st.session_state.pagina_atual = "GPS Indoor"
-        st.rerun()
-
-    if st.button("🛍️  **GASTRONOMIA & RESERVAS** — Restaurantes com Seletor de Horário", use_container_width=True):
-        st.session_state.pagina_atual = "Compras Dual"
-        st.rerun()
-
-    if st.button("💼  **SAMPA WORK** — Jobs & Oportunidades Executivas", use_container_width=True):
-        st.session_state.pagina_atual = "Sampa Work"
-        st.rerun()
-
-    render_flow_ai_footer()
-
-# ---------------------------------------------------------
-# TELA 1.1: LISTA DE EVENTOS E EXPOSIÇÕES (MENU DEDICADO)
-# ---------------------------------------------------------
-elif st.session_state.pagina_atual == "Lista Eventos":
-    render_top_bar("Diretório de Feiras & Expos")
-
-    st.markdown("### 🏛️ Todas as Exposições & Feiras Ativas em São Paulo")
-    st.markdown("<p style='font-size:12px; color:#9ca3af;'>Selecione abaixo o evento para entrar no ecossistema específico do pavilhão.</p>", unsafe_allow_html=True)
-
     pavilhoes_eventos = [
         {
             "id": "expocenter_norte",
@@ -344,26 +324,46 @@ elif st.session_state.pagina_atual == "Lista Eventos":
         }
     ]
 
-    for ev in pavilhoes_eventos:
-        st.markdown(
-            f"""
-            <div class="neon-card">
-                <div style="color: #00F59B; font-weight: bold; font-size: 15px;">🏢 {ev['pavilhao']}</div>
-                <div style="color: #00D2FF; font-size: 14px; font-weight: bold; margin: 4px 0;">{ev['nome']}</div>
-                <div style="color: #f3f4f6; font-size: 12px; margin-bottom: 4px;">🏷️ <b>Tipo:</b> {ev['tipo']} &nbsp;|&nbsp; 📅 {ev['data']}</div>
-                <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 4px;">{ev['desc']}</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        if st.button(f"🚀 Entrar no Ecossistema: {ev['pavilhao']}", key=f"menu_ev_{ev['id']}", use_container_width=True):
-            st.session_state.evento_selecionado = ev
-            st.session_state.pagina_atual = "Dashboard Evento"
-            st.rerun()
+    # Menu seletor estilo dropdown para abrir o evento escolhido
+    nombres_eventos = [f"{ev['pavilhao']} — {ev['nome']}" for ev in pavilhoes_eventos]
+    evento_escolhido_menu = st.selectbox("📂 Selecione o Evento no Menu de Exposições:", nombres_eventos)
+    
+    # Identifica qual foi selecionado no selectbox
+    idx_selecionado = nombres_eventos.index(evento_escolhido_menu)
+    ev_atual = pavilhoes_eventos[idx_selecionado]
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
-        st.session_state.pagina_atual = "Home"
+    st.markdown(
+        f"""
+        <div class="neon-card">
+            <div style="color: #00F59B; font-weight: bold; font-size: 15px;">🏢 {ev_atual['pavilhao']}</div>
+            <div style="color: #00D2FF; font-size: 14px; font-weight: bold; margin: 4px 0;">{ev_atual['nome']}</div>
+            <div style="color: #f3f4f6; font-size: 12px; margin-bottom: 4px;">🏷️ <b>Tipo:</b> {ev_atual['tipo']} &nbsp;|&nbsp; 📅 {ev_atual['data']}</div>
+            <p style="color: #d1d5db; font-size: 12px; line-height: 1.4; margin-top: 4px;">{ev_atual['desc']}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button(f"🚀 Acessar Ecossistema do Evento Selecionado", use_container_width=True):
+        st.session_state.evento_selecionado = ev_atual
+        st.session_state.pagina_atual = "Dashboard Evento"
+        st.rerun()
+
+    st.markdown("### 🌐 Módulos Principais do Ecossistema")
+    
+    if st.button("🤝  **SAMPA MATCH** — Radar Biz & Conexões Gerais", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Match Geral"
+        st.rerun()
+
+    if st.button("📍  **GPS INDOOR** — Mapa Tático & Localização", use_container_width=True):
+        st.session_state.pagina_atual = "GPS Indoor"
+        st.rerun()
+
+    if st.button("🛍️  **GASTRONOMIA & RESERVAS** — Restaurantes & Caldos (Dias Chuvosos)", use_container_width=True):
+        st.session_state.pagina_atual = "Compras Dual"
+        st.rerun()
+
+    if st.button("💼  **SAMPA WORK** — Jobs & Oportunidades Executivas", use_container_width=True):
+        st.session_state.pagina_atual = "Sampa Work"
         st.rerun()
 
     render_flow_ai_footer()
@@ -378,7 +378,7 @@ elif st.session_state.pagina_atual == "Cadastro Usuario":
         """
         <div class="neon-card-cyan">
             <div style="color: #00D2FF; font-weight: bold; font-size: 15px; margin-bottom: 6px;">🔗 CADASTRO VIA LINKEDIN & RETENÇÃO</div>
-            <p style="font-size: 13px; color: #d1d5db;">Conecte sua conta profissional para carregar seus dados e garantir mensagens diretas e networking seguro.</p>
+            <p style="font-size: 13px; color: #d1d5db;">Atualize seus dados profissionais para refletir sua nota 5 estrelas e bio executiva no app.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -386,38 +386,25 @@ elif st.session_state.pagina_atual == "Cadastro Usuario":
 
     with st.form("form_cadastro_usuario"):
         st.markdown("### Credenciais Profissionais")
-        linkedin_url = st.text_input("🔗 Link do Perfil do LinkedIn", "https://linkedin.com/in/seu-perfil")
-        whatsapp_celular = st.text_input("📱 Celular (WhatsApp) para Alertas e Retenção", "(11) 99999-9999")
+        nome_input = st.text_input("Nome Completo", st.session_state.dados_usuario["nome"])
+        cargo_input = st.text_input("Cargo / Bio Resumida (Estilo LinkedIn)", st.session_state.dados_usuario["cargo"])
+        linkedin_url = st.text_input("🔗 Link do Perfil do LinkedIn", st.session_state.dados_usuario["linkedin"])
+        whatsapp_celular = st.text_input("📱 Celular (WhatsApp) para Alertas e Retenção", st.session_state.dados_usuario["whatsapp"])
         
-        st.markdown("### Perfil de Participação no Evento")
-        tipo_participante = st.selectbox("Você participa como:", ["Exibidor / Empresa no Estande", "Visitante / Comprador Geral"])
+        tipo_participante = st.selectbox("Você participa como:", ["Exibidor / Consultor B2B", "Visitante / Comprador Geral"])
+        empresa_estande = st.text_input("🏢 Nome da sua Empresa", st.session_state.dados_usuario["empresa"])
         
-        empresa_estande = ""
-        nicho_parceria = ""
-        if tipo_participante == "Exibidor / Empresa no Estande":
-            empresa_estande = st.text_input("🏢 Confirme o Nome da sua Empresa / Estande", "Ex: TechSolutions Global")
-            nicho_parceria = st.selectbox("Nicho Específico para Parcerias e Contratos B2B:", [
-                "Tecnologia & Software B2B", 
-                "Logística & Supply Chain", 
-                "Saúde & MedTech", 
-                "Investimentos & Venture Capital", 
-                "Consultoria & Serviços Executivos"
-            ])
-        
-        uploaded_foto = st.file_uploader("📸 Suba sua Foto de Perfil (Avatar)", type=["png", "jpg", "jpeg"])
-        
-        submitted = st.form_submit_button("✅ Concluir Cadastro & Entrar no App")
+        submitted = st.form_submit_button("✅ Salvar Alterações de Perfil")
         if submitted:
-            st.session_state.usuario_logado = True
-            st.session_state.dados_usuario = {
+            st.session_state.dados_usuario.update({
+                "nome": nome_input,
+                "cargo": cargo_input,
                 "linkedin": linkedin_url,
                 "whatsapp": whatsapp_celular,
                 "tipo": tipo_participante,
-                "empresa": empresa_estande,
-                "nicho": nicho_parceria,
-                "foto": uploaded_foto
-            }
-            st.success("🎉 Cadastro realizado com sucesso! Seus dados foram sincronizados.")
+                "empresa": empresa_estande
+            })
+            st.success("🎉 Perfil atualizado com sucesso!")
             st.session_state.pagina_atual = "Home"
             st.rerun()
 
@@ -445,32 +432,14 @@ elif st.session_state.pagina_atual == "Dashboard Evento":
         unsafe_allow_html=True,
     )
 
-    if not st.session_state.usuario_logado:
-        st.warning("⚠️ Você ainda não concluiu seu cadastro profissional. Cadastre-se para habilitar conexões e postagens!")
-        if st.button("👉 Fazer Cadastro Agora", use_container_width=True):
-            st.session_state.pagina_atual = "Cadastro Usuario"
-            st.rerun()
-    else:
-        user = st.session_state.dados_usuario
-        st.markdown(
-            f"""
-            <div style="background: rgba(0,245,155,0.08); padding: 10px 15px; border-radius: 10px; border: 1px solid rgba(0,245,155,0.3); margin-bottom: 15px; font-size: 13px;">
-                👤 <b>Logado como:</b> {user['tipo']} | 📱 {user['whatsapp']} {f"| 🏢 {user['empresa']}" if user['empresa'] else ""}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    aba_escolhida = st.radio("Navegação do Evento:", ["🤝 Match & Conexões B2B", "🏢 Empresas do Estande & Nichos", "📸 Publicações & Feed"], horizontal=True)
+    aba_escolhida = st.radio("Navegação do Evento:", ["🤝 Match & Conexões B2B", "🏢 Empresas do Estande", "📸 Feed Oficial"], horizontal=True)
 
     if aba_escolhida == "🤝 Match & Conexões B2B":
-        st.markdown("### ⚡ Radar de Matches Inteligentes")
-        st.markdown("<p style='font-size:12px; color:#9ca3af;'>Conecte-se com expositores e profissionais alinhados ao seu nicho.</p>", unsafe_allow_html=True)
-
+        st.markdown("### ⚡ Radar de Matches Inteligentes (Nota 5 Estrelas)")
+        
         perfis_match = [
-            {"nome": "Marcos Vinicius", "cargo": "Head de Inovação", "empresa": "CloudNet Brasil", "nicho": "Tecnologia & Software B2B"},
-            {"nome": "Juliana Paes", "cargo": "Diretora de Contratos", "empresa": "Global Supply Ltda", "nicho": "Logística & Supply Chain"},
-            {"nome": "Dr. Roberto Sampaio", "cargo": "CEO & Fundador", "empresa": "MedTech Solutions", "nicho": "Saúde & MedTech"}
+            {"nome": "Marcos Vinicius", "cargo": "Head de Inovação (⭐ 4.9)", "empresa": "CloudNet Brasil", "nicho": "Tecnologia & Software B2B"},
+            {"nome": "Juliana Paes", "cargo": "Diretora de Contratos (⭐ 5.0)", "empresa": "Global Supply Ltda", "nicho": "Logística & Supply Chain"}
         ]
 
         for p in perfis_match:
@@ -485,12 +454,47 @@ elif st.session_state.pagina_atual == "Dashboard Evento":
             )
             col_m1, col_m2 = st.columns(2)
             with col_m1:
-                if st.button(f"💚 Curtir / Like", key=f"like_{p['nome']}"):
-                    st.success(f"Você enviou um Like para {p['nome']}!")
+                if st.button(f"💚 Curtir", key=f"like_{p['nome']}"):
+                    st.success(f"Like enviado para {p['nome']}!")
             with col_m2:
-                if st.button(f"🤝 Conectar (Match)", key=f"match_{p['nome']}"):
-                    st.success(f"Solicitação de Match B2B enviada com sucesso para {p['nome']} via WhatsApp/LinkedIn!")
+                if st.button(f"🤝 Conectar", key=f"match_{p['nome']}"):
+                    st.success(f"Match B2B estabelecido com {p['nome']}!")
 
-    elif aba_escolhida == "🏢 Empresas do Estande & Nichos":
-        st.markdown("### 📋 Cadastro de Empresas do Estande & Nichos de Parceria")
-        st.markdown("<p style='font-size:12px; color:#9ca3af;'>Cadastre sua empresa expositora ou 
+    elif aba_escolhida == "🏢 Empresas do Estande":
+        st.markdown("### 📋 Diretório de Empresas Expositoras")
+        st.markdown("* **TechInnovate Cloud** (Tecnologia) — *Estande 42*")
+        st.markdown("* **Sampa Cargo Express** (Logística) — *Estande 15*")
+
+    elif aba_escolhida == "📸 Feed Oficial":
+        st.markdown("### 📸 Feed de Momentos do Pavilhão")
+        st.markdown(
+            """
+            <div class="neon-card">
+                <div style="color: #00F59B; font-weight: bold; font-size: 13px;">🏢 Geovani Santi <span style="color:#00D2FF; font-size:11px;">(⭐ 5.0)</span></div>
+                <p style="font-size: 12px; color: #d1d5db; margin-top: 4px;">Apresentando as soluções de inteligência de fluxo no Expo Center Norte. Venha tomar um café!</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+        st.session_state.pagina_atual = "Home"
+        st.rerun()
+
+    render_flow_ai_footer()
+
+# ---------------------------------------------------------
+# TELA 4: SAMPA MATCH GERAL
+# ---------------------------------------------------------
+elif st.session_state.pagina_atual == "Sampa Match Geral":
+    render_top_bar("SAMPA MATCH: Radar & Áudio")
+
+    st.markdown(
+        """
+        <div class="neon-card" style="text-align: center;">
+            <div style="color: #00F59B; font-weight: bold; font-size: 14px; margin-bottom: 8px;">🎧 GUIA DE ÁUDIO IMERSIVO: CENTRO HISTÓRICO</div>
+            <div style="font-size: 13px; color: #ffffff; font-weight: bold; margin-bottom: 4px;">Café Girondino</div>
+            <div style="font-size: 11px; color: #9ca3af; margin-bottom: 12px;">Fundado em 1554, o coração da metrópole guarda séculos de histórias...</div>
+            <div style="background: rgba(0,245,155,0.08); border-radius: 10px; padding: 15px; border: 1px solid rgba(0,245,155,0.3);">
+                <span style="font-size: 20px; color: #00F59B
