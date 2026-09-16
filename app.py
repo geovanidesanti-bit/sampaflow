@@ -11,6 +11,48 @@ st.set_page_config(
     layout="centered",
 )
 
+# --- INICIALIZAÇÃO SEGURA DE VARIÁVEIS DE SESSÃO (CORREÇÃO DE ERRO) ---
+if "pagina_atual" not in st.session_state:
+    st.session_state.pagina_atual = "Home"
+
+if "historico_ia" not in st.session_state:
+    st.session_state.historico_ia = []
+
+if "dados_usuario" not in st.session_state:
+    st.session_state.dados_usuario = {
+        "nome": "Geovani Santi",
+        "cargo": "Gestão Comercial & Tech Leader",
+        "linkedin": "linkedin.com/in/geovani-santi",
+        "whatsapp": "(11) 99999-9999",
+        "empresa": "Samsung Brasil",
+        "estande": "Estande 12 — Pavilhão Transamérica",
+        "produto_destaque": "Smartphone Samsung Galaxy (Novidade)",
+        "estrelas": "⭐ 5.0 (48 avaliações)"
+    }
+
+if "dados_motorista" not in st.session_state:
+    st.session_state.dados_motorista = {
+        "nome": "Geovani Santi",
+        "carro": "Renault Kwid 2020 Prata",
+        "saldo_pix": 120.00,
+        "faturamento_total": 450.00
+    }
+
+if "evento_selecionado" not in st.session_state:
+    st.session_state.evento_selecionado = {
+        "pavilhao": "Transamérica Expo Center",
+        "nome": "Sampa Tech & Mobile Summit 2026",
+        "tipo": "Feira de Tecnologia & Eletrônicos B2B",
+        "data": "15 a 18 de Setembro de 2026",
+        "desc": "O maior evento de inovação mobile e lançamentos de dispositivos da América Latina.",
+        "empresas_cadastradas": 340,
+        "pessoas_trabalhando": 1250,
+        "visitantes_online": 8420
+    }
+
+if "cupom_gerado" not in st.session_state:
+    st.session_state.cupom_gerado = None
+
 # Injeção de CSS Customizado - Dark Glassmorphism & Radar Style
 st.markdown(
     """
@@ -138,71 +180,29 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Inicialização segura de variáveis de sessão
-if "pagina_atual" not in st.session_state:
-    st.session_state.pagina_atual = "Home"
-
-if "historico_ia" not in st.session_state:
-    st.session_state.historico_ia = []
-
-if "dados_usuario" not in st.session_state:
-    st.session_state.dados_usuario = {
-        "nome": "Geovani Santi",
-        "cargo": "Gestão Comercial & Tech Leader",
-        "linkedin": "linkedin.com/in/geovani-santi",
-        "whatsapp": "(11) 99999-9999",
-        "empresa": "Samsung Brasil",
-        "estande": "Estande 12 — Pavilhão Transamérica",
-        "produto_destaque": "Smartphone Samsung Galaxy (Novidade)",
-        "estrelas": "⭐ 5.0 (48 avaliações)"
-    }
-
-if "dados_motorista" not in st.session_state:
-    st.session_state.dados_motorista = {
-        "nome": "Geovani Santi",
-        "carro": "Renault Kwid 2020 Prata",
-        "saldo_pix": 120.00,
-        "faturamento_total": 450.00
-    }
-
-if "evento_selecionado" not in st.session_state:
-    st.session_state.evento_selecionado = {
-        "pavilhao": "Transamérica Expo Center",
-        "nome": "Sampa Tech & Mobile Summit 2026",
-        "tipo": "Feira de Tecnologia & Eletrônicos B2B",
-        "data": "15 a 18 de Setembro de 2026",
-        "desc": "O maior evento de inovação mobile e lançamentos de dispositivos da América Latina.",
-        "empresas_cadastradas": 340,
-        "pessoas_trabalhando": 1250,
-        "visitantes_online": 8420
-    }
-
-if "cupom_gerado" not in st.session_state:
-    st.session_state.cupom_gerado = None
-
 # --- MENU LATERAL DE SEGURANÇA (GARANTE A NAVEGAÇÃO NO MOBILE) ---
 with st.sidebar:
     st.markdown("### ⚡ Navegação SampaFlow")
-    if st.button("🏠 Voltar ao Hub Central", use_container_width=True):
+    if st.button("🏠 Voltar ao Hub Central", use_container_width=True, key="sb_home"):
         st.session_state.pagina_atual = "Home"
         st.rerun()
-    if st.button("🍷 Sampa Date", use_container_width=True):
+    if st.button("🍷 Sampa Date", use_container_width=True, key="sb_date"):
         st.session_state.pagina_atual = "Sampa Date"
         st.rerun()
-    if st.button("🚀 Painel do Evento", use_container_width=True):
+    if st.button("🚀 Painel do Evento", use_container_width=True, key="sb_evento"):
         st.session_state.pagina_atual = "Dashboard Evento"
         st.rerun()
-    if st.button("🤝 Sampa Match / Meet", use_container_width=True):
+    if st.button("🤝 Sampa Match / Meet", use_container_width=True, key="sb_match"):
         st.session_state.pagina_atual = "Sampa Match Geral"
         st.rerun()
-    if st.button("🚗 Portal do Motorista", use_container_width=True):
+    if st.button("🚗 Portal do Motorista", use_container_width=True, key="sb_motorista"):
         st.session_state.pagina_atual = "Portal Motorista"
         st.rerun()
-    if st.button("✏️ Editar Perfil", use_container_width=True):
+    if st.button("✏️ Editar Perfil", use_container_width=True, key="sb_perfil"):
         st.session_state.pagina_atual = "Cadastro Usuario"
         st.rerun()
     st.markdown("---")
-    st.caption("SampaFlow v2.6 • SP 2026")
+    st.caption("SampaFlow v2.7 • SP 2026")
 
 def gerar_resposta_ia_contextual(pagina, input_usuario=""):
     if pagina == "Home":
@@ -301,33 +301,33 @@ if pagina == "Home":
 
     col_u1, col_u2 = st.columns(2)
     with col_u1:
-        if st.button("🚗 Portal do Motorista", use_container_width=True):
+        if st.button("🚗 Portal do Motorista", use_container_width=True, key="btn_h_mot"):
             st.session_state.pagina_atual = "Portal Motorista"
             st.rerun()
     with col_u2:
-        if st.button("✏️ Editar Perfil", use_container_width=True):
+        if st.button("✏️ Editar Perfil", use_container_width=True, key="btn_h_cad"):
             st.session_state.pagina_atual = "Cadastro Usuario"
             st.rerun()
 
     st.markdown("### 🏛️ Menu Principal & Novidades")
-    if st.button("🍷 SAMPA DATE — O Guia do Encontro", use_container_width=True):
+    if st.button("🍷 SAMPA DATE — O Guia do Encontro", use_container_width=True, key="btn_h_date"):
         st.session_state.pagina_atual = "Sampa Date"
         st.rerun()
-    if st.button("🚀 Painel do Evento (Transamérica ao Vivo)", use_container_width=True):
+    if st.button("🚀 Painel do Evento (Transamérica ao Vivo)", use_container_width=True, key="btn_h_ev"):
         st.session_state.pagina_atual = "Dashboard Evento"
         st.rerun()
 
     st.markdown("### 🌐 Outros Módulos")
-    if st.button("🤝 SAMPA MATCH / MEET — Radar B2B", use_container_width=True):
+    if st.button("🤝 SAMPA MATCH / MEET — Radar B2B", use_container_width=True, key="btn_h_match"):
         st.session_state.pagina_atual = "Sampa Match Geral"
         st.rerun()
-    if st.button("📍 GPS INDOOR — Mapa Tático", use_container_width=True):
+    if st.button("📍 GPS INDOOR — Mapa Tático", use_container_width=True, key="btn_h_gps"):
         st.session_state.pagina_atual = "GPS Indoor"
         st.rerun()
-    if st.button("🛍️ GASTRONOMIA — 300 Restaurantes (10% OFF)", use_container_width=True):
+    if st.button("🛍️ GASTRONOMIA — 300 Restaurantes (10% OFF)", use_container_width=True, key="btn_h_gast"):
         st.session_state.pagina_atual = "Compras Dual"
         st.rerun()
-    if st.button("🎭 PASSEIOS & CULTURA — O que fazer em SP", use_container_width=True):
+    if st.button("🎭 PASSEIOS & CULTURA — O que fazer em SP", use_container_width=True, key="btn_h_cult"):
         st.session_state.pagina_atual = "Passeios e Cultura"
         st.rerun()
 
@@ -402,13 +402,13 @@ elif pagina == "Sampa Date":
             unsafe_allow_html=True,
         )
 
-        if st.button("🎁 Gerar Cupom de 10% OFF para o Restaurante"):
+        if st.button("🎁 Gerar Cupom de 10% OFF para o Restaurante", key="btn_cupom_date"):
             hash_date = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
             st.session_state.cupom_gerado = f"SAMPA-DATE-{hash_date}-10OFF"
             st.success(f"Cupom gerado com sucesso: {st.session_state.cupom_gerado} (Apresente no estabelecimento parceiro)")
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_date"):
         st.session_state.pagina_atual = "Home"
         st.rerun()
     render_flow_ai_footer()
@@ -477,7 +477,7 @@ elif pagina == "Dashboard Evento":
         unsafe_allow_html=True,
     )
 
-    if st.button("⬅️ Voltar ao Início", use_container_width=True):
+    if st.button("⬅️ Voltar ao Início", use_container_width=True, key="btn_back_ev"):
         st.session_state.pagina_atual = "Home"
         st.rerun()
     render_flow_ai_footer()
@@ -497,8 +497,4 @@ elif pagina == "Sampa Match Geral":
         unsafe_allow_html=True,
     )
 
-    st.markdown("### 👥 Perfis com Sinergia Próximos de Você:")
-    
-    matches = [
-        {"nome": "Ana Mendes", "cargo": "Head de Parcerias", "empresa": "Samsung Partner", "estande": "Estande 15", "status": "Próximo (15m)"},
-        {"nome": "Carlos Eduardo", "cargo": "Diretor de Tecnologia", "empresa": "Inovação SP Tech", "estande
+    st.m
